@@ -12,7 +12,7 @@ Public Class SnippetInfo
     ''' A code snippet's file name
     ''' </summary>
     ''' <returns>String</returns>
-    Public Property FileName As String
+    Public Property SnippetFileName As String
     ''' <summary>
     ''' The programming language the snippet targets
     ''' </summary>
@@ -104,11 +104,11 @@ Public Class SnippetInfo
     ''' <param name="value"></param>
     Private Sub CheckValue(ByVal value As String)
         Select Case value
-            Case Is = "FileName"
-                If Me.FileName = "" Or String.IsNullOrEmpty(Me.FileName) Then
-                    Me.AddError("FileName", "Value cannot be null")
+            Case Is = "SnippetFileName"
+                If Me.SnippetFileName = "" Or String.IsNullOrEmpty(Me.SnippetFileName) Then
+                    Me.AddError("SnippetFileName", "Value cannot be null")
                 Else
-                    Me.RemoveError("FileName")
+                    Me.RemoveError("SnippetFileName")
                 End If
             Case Is = "SnippetLanguage"
                 If Me.SnippetLanguage = "" Or String.IsNullOrEmpty(Me.SnippetLanguage) Then
@@ -131,7 +131,7 @@ Public Class SnippetInfo
     ''' </summary>
     Public Sub New()
         Me.SnippetLanguage = Nothing
-        Me.FileName = Nothing
+        Me.SnippetFileName = Nothing
         Me.SnippetPath = Nothing
         Me.SnippetDescription = Nothing
     End Sub

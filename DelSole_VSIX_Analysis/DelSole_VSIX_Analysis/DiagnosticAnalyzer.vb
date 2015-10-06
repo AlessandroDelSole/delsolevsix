@@ -74,9 +74,9 @@ Public Class SnippetServiceLibraryAnalyzerAnalyzer
         If fileNameValue Is Nothing Then Return
 
         'If the URL Is Not well-formed, create a diagnostic
-        If Not IO.Path.GetExtension(fileNameValue).ToLower.EndsWith("snippet") Then
+        If Not IO.Path.GetExtension(fileNameValue).ToLower.EndsWith("vsix") Then
             Dim diagn = Diagnostic.Create(Rule, fileNameLiteral.GetLocation,
-       "The specified file name might not be a valid code snippet file")
+       "VSIX file names must end with .vsix extension")
             context.ReportDiagnostic(diagn)
         End If
     End Sub

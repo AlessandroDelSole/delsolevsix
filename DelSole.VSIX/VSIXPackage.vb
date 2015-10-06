@@ -352,10 +352,10 @@ Public Class VSIXPackage
 
             'Copy all snippets in the collection to the above subfolder
             For Each item1 In Me.CodeSnippets
-                Dim tempName As String = snippetFolder + "\" + item1.FileName.Replace(" ", "%20")
+                Dim tempName As String = snippetFolder + "\" + item1.SnippetFileName.Replace(" ", "%20")
                 If IO.File.Exists(tempName) Then IO.File.Delete(tempName)
 
-                IO.File.Copy(item1.SnippetPath + "\" + item1.FileName, tempName)
+                IO.File.Copy(item1.SnippetPath + "\" + item1.SnippetFileName, tempName)
             Next
         Catch ex As Exception
             Throw
