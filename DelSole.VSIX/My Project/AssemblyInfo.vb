@@ -8,9 +8,9 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("DelSole.VSIX")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("")> 
+<Assembly: AssemblyTitle("DelSole.VSIX Library")>
+<Assembly: AssemblyDescription("A library that helps generating VSIX packages for code snippets")>
+<Assembly: AssemblyCompany("Alessandro Del Sole")>
 <Assembly: AssemblyProduct("DelSole.VSIX")> 
 <Assembly: AssemblyCopyright("Copyright ©  2015")> 
 <Assembly: AssemblyTrademark("")> 
