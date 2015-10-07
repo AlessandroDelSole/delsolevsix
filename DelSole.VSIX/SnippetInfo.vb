@@ -197,8 +197,9 @@ Public Class SnippetInfo
     End Function
 
     ''' <summary>
-    ''' Detect the description for the specified snippet file
+    ''' Detect the description for the specified snippet file. If the operation fails, return the "Description unavailable" message
     ''' </summary>
+    ''' <remarks>Note: invoking GetSnippetDescription might fail if the code snippet schema is based on v 1.0</remarks>
     ''' <param name="snippetFile"></param>
     ''' <returns></returns>
     Public Shared Function GetSnippetDescription(snippetFile As String) As String

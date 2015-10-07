@@ -62,7 +62,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Code snippets file name extensions should end with &quot;snippet&quot;.
+        '''  Looks up a localized string similar to VSIX file name extensions should end with .vsix&quot;.
         '''</summary>
         Friend ReadOnly Property AnalyzerDescription() As String
             Get
@@ -80,7 +80,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Possibly invalid snippet file name.
+        '''  Looks up a localized string similar to Possibly invalid VSIX file name.
         '''</summary>
         Friend ReadOnly Property AnalyzerTitle() As String
             Get

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AnalyzerDescription" xml:space="preserve">
-    <value>Code snippets file name extensions should end with "snippet"</value>
+    <value>VSIX file name extensions should end with .vsix"</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="AnalyzerMessageFormat" xml:space="preserve">
@@ -126,7 +126,7 @@
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="AnalyzerTitle" xml:space="preserve">
-    <value>Possibly invalid snippet file name</value>
+    <value>Possibly invalid VSIX file name</value>
     <comment>The title of the diagnostic.</comment>
   </data>
 </root>
