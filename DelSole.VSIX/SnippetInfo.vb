@@ -7,27 +7,72 @@ Imports <xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 ''' </summary>
 Public Class SnippetInfo
     Implements IDataErrorInfo
+    Implements INotifyPropertyChanged
+
+    Private _snippetFileName As String
+    Private _snippetLanguage As String
+    Private _snippetPath As String
+    Private _snippetDescription As String
 
     ''' <summary>
     ''' A code snippet's file name
     ''' </summary>
     ''' <returns>String</returns>
     Public Property SnippetFileName As String
+        Get
+            Return _snippetFileName
+        End Get
+        Set(value As String)
+            _snippetFileName = value
+            OnPropertyChanged(NameOf(SnippetFileName))
+            CheckValue(NameOf(SnippetFileName))
+        End Set
+    End Property
+
     ''' <summary>
     ''' The programming language the snippet targets
     ''' </summary>
     ''' <returns>String</returns>
     Public Property SnippetLanguage As String
+        Get
+            Return _snippetLanguage
+        End Get
+        Set(value As String)
+            _snippetLanguage = value
+            OnPropertyChanged(NameOf(SnippetLanguage))
+            CheckValue(NameOf(SnippetLanguage))
+        End Set
+    End Property
+
     ''' <summary>
     ''' The snippet's path on disk
     ''' </summary>
     ''' <returns>String</returns>
     Public Property SnippetPath As String
+        Get
+            Return _snippetPath
+        End Get
+        Set(value As String)
+            _snippetPath = value
+            OnPropertyChanged(NameOf(SnippetPath))
+            CheckValue(NameOf(SnippetPath))
+        End Set
+    End Property
+
     ''' <summary>
     ''' The snippet's description
     ''' </summary>
     ''' <returns>String</returns>
     Public Property SnippetDescription As String
+        Get
+            Return _snippetDescription
+        End Get
+        Set(value As String)
+            _snippetDescription = value
+            OnPropertyChanged(NameOf(SnippetDescription))
+            CheckValue(NameOf(SnippetDescription))
+        End Set
+    End Property
 
     ''' <summary>
     ''' Return the full pathname for a code snippet, combining the values of <seealso cref="SnippetPath"/> and <seealso cref="SnippetFileName"/> properties
@@ -168,6 +213,21 @@ Public Class SnippetInfo
             Return "Description unavailable"
         End Try
     End Function
+
+    ''' <summary>
+    ''' Notify callers for changes
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    Public Event PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Implements INotifyPropertyChanged.PropertyChanged
+
+    ''' <summary>
+    ''' Raise the PropertyChanged event when instance data changes
+    ''' </summary>
+    ''' <param name="name"></param>
+    Protected Sub OnPropertyChanged(ByVal name As String)
+        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(name))
+    End Sub
 End Class
 
 ''' <summary>
