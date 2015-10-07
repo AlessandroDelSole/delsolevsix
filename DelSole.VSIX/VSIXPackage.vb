@@ -523,7 +523,7 @@ Public Class VSIXPackage
         Implements System.ComponentModel.IDataErrorInfo.Error
         Get
             If validationErrors.Count > 0 Then
-                Return String.Format("{0} data is invalid.", TypeName(Me))
+                Return $"{TypeName(Me)} data is invalid."
             Else
                 Return Nothing
             End If
@@ -589,7 +589,7 @@ Public Class VSIXPackage
     Public Sub New()
         'Initializes properties with sample values
         Me.CodeSnippets = New SnippetInfoCollection
-        Me.PackageAuthor = My.User.Name
+        Me.PackageAuthor = My.Computer.Name
         Me.PackageGuid = Guid.NewGuid
         Me.PackageVersion = "1.0"
         Me.PackageName = "My sample package"
@@ -777,6 +777,11 @@ Public Class Compression
 
     End Function
 
+    ''' <summary>
+    ''' Copy a stream into another
+    ''' </summary>
+    ''' <param name="inputStream"></param>
+    ''' <param name="outputStream"></param>
     Private Shared Sub CopyStream(ByVal inputStream As System.IO.FileStream, ByVal outputStream As System.IO.Stream)
         Dim bufferSize As Long = If(inputStream.Length < BUFFER_SIZE, inputStream.Length, BUFFER_SIZE)
         Dim buffer As Byte() = New Byte(CInt(bufferSize) - 1) {}

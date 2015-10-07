@@ -30,6 +30,16 @@ Public Class SnippetInfo
     Public Property SnippetDescription As String
 
     ''' <summary>
+    ''' Return the full pathname for a code snippet, combining the values of <seealso cref="SnippetPath"/> and <seealso cref="SnippetFileName"/> properties
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property SnippetPathName As String
+        Get
+            Return IO.Path.Combine(SnippetPath, SnippetFileName)
+        End Get
+    End Property
+
+    ''' <summary>
     ''' Holds a collection of validation errors
     ''' </summary>
     Private validationErrors As New Dictionary(Of String, String)
@@ -74,7 +84,7 @@ Public Class SnippetInfo
         Implements System.ComponentModel.IDataErrorInfo.Error
         Get
             If validationErrors.Any Then
-                Return String.Format("{0} data is invalid.", TypeName(Me))
+                Return $"{TypeName(Me)} data is invalid."
             Else
                 Return Nothing
             End If
@@ -126,17 +136,6 @@ Public Class SnippetInfo
     End Sub
 
     ''' <summary>
-    ''' Create an instance of the class, supplying null values
-    ''' for every property
-    ''' </summary>
-    Public Sub New()
-        Me.SnippetLanguage = Nothing
-        Me.SnippetFileName = Nothing
-        Me.SnippetPath = Nothing
-        Me.SnippetDescription = Nothing
-    End Sub
-
-    ''' <summary>
     ''' Detect the target programming language
     ''' for the specified snippet file
     ''' </summary>
@@ -158,13 +157,16 @@ Public Class SnippetInfo
     ''' <param name="snippetFile"></param>
     ''' <returns></returns>
     Public Shared Function GetSnippetDescription(snippetFile As String) As String
-        Dim doc As XDocument = XDocument.Load(snippetFile)
+        Try
+            Dim doc As XDocument = XDocument.Load(snippetFile)
 
-        Dim query = From line In doc...<Description>
-                    Select line.Value
+            Dim query = From line In doc...<Description>
+                        Select line.Value
 
-        Return query.FirstOrDefault
-
+            Return query.FirstOrDefault
+        Catch ex As Exception
+            Return "Description unavailable"
+        End Try
     End Function
 End Class
 
