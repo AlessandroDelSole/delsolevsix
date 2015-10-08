@@ -33,7 +33,7 @@ namespace SampleApp_CS
             //Assign other properties here...
 
             //Go build it!
-            Vsix.Build("C:\temp\Sample.vsix");
+            Vsix.Build("C:\\temp\\Sample.vsix");
         }
     }
 }
