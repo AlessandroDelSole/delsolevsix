@@ -135,13 +135,13 @@ Public Class VSIXPackage
     ''' The collection of contents (assets) that the VSIX container is going to install
     ''' </summary>
     ''' <returns></returns>
-    Public Property AssetList As AssetInfoCollection
+    Private Property AssetList As AssetInfoCollection
 
     ''' <summary>
     ''' The collection of dependencies a VSIX relies on
     ''' </summary>
     ''' <returns></returns>
-    Public Property DependenciesList As DependencyInfoCollection
+    Private Property DependenciesList As DependencyInfoCollection
 
     ''' <summary>
     ''' The license agreement an user must accept to install the VSIX package.

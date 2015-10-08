@@ -10,7 +10,9 @@ Public Class SnippetServiceLibraryAnalyzerAnalyzer
     Private Shared ReadOnly Description As LocalizableString = New LocalizableResourceString(NameOf(My.Resources.AnalyzerDescription), My.Resources.ResourceManager, GetType(My.Resources.Resources))
     Private Const Category = "Naming"
 
-    Private Shared Rule As New DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
+    Private Shared Rule As New DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category,
+                                                    DiagnosticSeverity.Warning, isEnabledByDefault:=True,
+                                                    description:=Description, helpLinkUri:="https://github.com/AlessandroDelSole/delsolevsix/wiki/SSL001---VSIX-file-name-extensions-should-end-with-.vsix%22")
 
     Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor)
         Get

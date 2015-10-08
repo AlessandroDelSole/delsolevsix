@@ -1,10 +1,10 @@
 ﻿Imports System.Collections.ObjectModel
-Public Class DependencyInfo
+Friend Class DependencyInfo
     Public Property Id As String
     Public Property DisplayName As String
     Public Property Version As String
 End Class
 
-Public Class DependencyInfoCollection
+Friend Class DependencyInfoCollection
     Inherits ObservableCollection(Of DependencyInfo)
 End Class

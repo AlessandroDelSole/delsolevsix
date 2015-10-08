@@ -11,7 +11,7 @@ Public Class GetSnippetLanguageAnalyzer
     Inherits DiagnosticAnalyzer
 
     Public Const DiagnosticId = "SSL003"
-    Friend Shared ReadOnly Title As LocalizableString = "Invalid snippet file's extension"
+    Friend Shared ReadOnly Title As LocalizableString = "GetSnippetDescription has an invalid file name"
     Friend Shared ReadOnly MessageFormat As LocalizableString = "'{0}'"
     Friend Shared ReadOnly Description As LocalizableString = "Snippet file name extensions should end with .*snippet"
     Friend Const Category = "Naming"

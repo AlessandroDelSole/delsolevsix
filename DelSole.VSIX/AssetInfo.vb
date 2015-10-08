@@ -1,10 +1,10 @@
 ﻿Imports System.Collections.ObjectModel
 
-Public Class AssetInfo
+Friend Class AssetInfo
     Public Property Type As String
     Public Property Path As String
 End Class
 
-Public Class AssetInfoCollection
+Friend Class AssetInfoCollection
     Inherits ObservableCollection(Of AssetInfo)
 End Class

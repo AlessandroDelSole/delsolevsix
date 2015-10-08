@@ -11,12 +11,14 @@ Public Class GetSnippetDescriptionAnalyzer
     Inherits DiagnosticAnalyzer
 
     Public Const DiagnosticId = "SSL002"
-    Friend Shared ReadOnly Title As LocalizableString = "Invalid snippet file's extension"
+    Friend Shared ReadOnly Title As LocalizableString = "GetSnippetDescription has an invalid file name"
     Friend Shared ReadOnly MessageFormat As LocalizableString = "'{0}'"
     Friend Shared ReadOnly Description As LocalizableString = "Snippet file name extensions should end with .*snippet"
     Friend Const Category = "Naming"
 
-    Private Shared Rule As New DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
+    Private Shared Rule As New DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category,
+                                                    DiagnosticSeverity.Warning, isEnabledByDefault:=True,
+                                                    description:=Description, helpLinkUri:="https://github.com/AlessandroDelSole/delsolevsix/wiki/SSL002---GetSnippetDescription-has-an-invalid-file-name")
 
     Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor)
         Get
