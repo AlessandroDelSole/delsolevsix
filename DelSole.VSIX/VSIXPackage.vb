@@ -132,6 +132,18 @@ Public Class VSIXPackage
     Public Property CodeSnippets As SnippetInfoCollection
 
     ''' <summary>
+    ''' The collection of contents (assets) that the VSIX container is going to install
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property AssetList As AssetInfoCollection
+
+    ''' <summary>
+    ''' The collection of dependencies a VSIX relies on
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property DependenciesList As DependencyInfoCollection
+
+    ''' <summary>
     ''' The license agreement an user must accept to install the VSIX package.
     ''' This must be the pathname of a .txt or .rtf file
     ''' </summary>
@@ -389,15 +401,12 @@ Public Class VSIXPackage
     End Sub
 
     ''' <summary>
-    ''' Build a VSIX package that contains the code snippets hold by the CodeSnippets property. Properties representing the package manifest must be populated before invoking this method.
+    ''' Generate the VSIX Manifest (extension.vsixmanifest file)
+    ''' Invoked internally by the <seealso cref="Build(String)"/> method
     ''' </summary>
-    ''' <param name="fileName"></param>
-    Public Sub Build(fileName As String)
-        'Create a temporary folder that stores all the archive content
-        'and that will be later zipped into a VSIX
-        Dim tempFolder = GetTempFolder()
+    ''' <param name="targetFolder"></param>
+    Private Sub GenerateVsixManifest(targetFolder As String)
 
-        'Generate the VSIX Manifest (extension.vsixmanifest file)
         Dim VsixManifest As XElement = <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
                                            <Metadata>
                                                <Identity Id=<%= Me.PackageID %> Version="1.0" Language="en-US" Publisher=<%= Me.PackageAuthor %>/>
@@ -429,7 +438,20 @@ Public Class VSIXPackage
         End If
 
         'Save the manifest and content types to the temp folder
-        VsixManifest.Save(tempFolder + "\extension.vsixmanifest")
+        VsixManifest.Save(targetFolder + "\extension.vsixmanifest")
+    End Sub
+
+    ''' <summary>
+    ''' Build a VSIX package that contains the code snippets hold by the CodeSnippets property. Properties representing the package manifest must be populated before invoking this method.
+    ''' </summary>
+    ''' <param name="fileName"></param>
+    Public Sub Build(fileName As String)
+        'Create a temporary folder that stores all the archive content
+        'and that will be later zipped into a VSIX
+        Dim tempFolder = GetTempFolder()
+
+        'Generate the VSIX manifest file
+        GenerateVsixManifest(tempFolder)
 
         'Copy assets to the temp folder
         If Me.License <> "" Then
