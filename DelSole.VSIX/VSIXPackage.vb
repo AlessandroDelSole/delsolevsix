@@ -337,7 +337,7 @@ Public Class VSIXPackage
 #End Region
 
     ''' <summary>
-    ''' Create a temporary folder to handle package-required files
+    ''' Create a temporary folder to handle package-required files.
     ''' If the folder already exists, it is first deleted
     ''' </summary>
     ''' <returns>String</returns>
@@ -634,6 +634,34 @@ Public Class VSIXPackage
             Return True
         End If
     End Function
+
+    ''' <summary>
+    ''' Merge the specified VSIX packages into the current VSIXPackage instance
+    ''' </summary>
+    ''' <param name="packages"></param>
+    Public Sub MergeVsix(packages() As String)
+        Throw New NotImplementedException
+    End Sub
+
+    ''' <summary>
+    ''' Merge the specified VSIX packages into one destination package
+    ''' </summary>
+    ''' <param name="sourcePackages"></param>
+    ''' <param name="destinationPackage"></param>
+    Public Shared Sub MergeVsix(sourcePackages() As String, destinationPackage As String)
+        For Each fileName In sourcePackages
+            'Check if all source packages exist
+            If Not IO.File.Exists(fileName) Then
+                Throw New FileNotFoundException("File not found", fileName)
+            End If
+
+            'Generate temp folder for each package
+            Dim newFolder = IO.Path.GetTempPath & ("\") & IO.Path.GetFileNameWithoutExtension(fileName)
+
+            'Extract the VSIX package
+
+        Next
+    End Sub
 End Class
 
 
@@ -649,17 +677,17 @@ Public Class Compression
     ''' </summary>
     ''' <param name="fileName"></param>
     ''' <returns>String</returns>
-    Private Shared Function findContentType(fileName As String) As String
+    Private Shared Function getContentType(fileName As String) As String
         Dim contentType As String
         Select Case IO.Path.GetExtension(fileName).ToLower
             Case Is = ".jpg"
                 contentType = System.Net.Mime.MediaTypeNames.Image.Jpeg
             Case Is = ".pkgdef"
-                contentType = "text/plain"
+                contentType = System.Net.Mime.MediaTypeNames.Text.Plain
             Case Is = ".txt"
-                contentType = "text/plain"
+                contentType = System.Net.Mime.MediaTypeNames.Text.Plain
             Case Is = ".vsixmanifest"
-                contentType = "text/xml"
+                contentType = System.Net.Mime.MediaTypeNames.Text.Xml
             Case Else
                 contentType = System.Net.Mime.MediaTypeNames.Application.Octet
         End Select
@@ -685,7 +713,7 @@ Public Class Compression
                 zip.DeletePart(uri)
             End If
 
-            Dim contentType As String = findContentType(fileToAdd)
+            Dim contentType As String = getContentType(fileToAdd)
 
             Dim part As PackagePart = zip.CreatePart(uri, contentType, CompressionOption.Normal)
 
@@ -713,7 +741,7 @@ Public Class Compression
                                  ByVal fileToAdd As String,
                                  ByVal directoryFile As String) As Boolean
         Try
-            Dim contentType As String = findContentType(fileToAdd)
+            Dim contentType As String = getContentType(fileToAdd)
             Using zip As Package = System.IO.Packaging.Package.Open(zipFilename, FileMode.OpenOrCreate)
                 Dim destFilename As String = ".\" & directoryFile & "\" & Path.GetFileName(fileToAdd)
                 Dim uri As Uri = PackUriHelper.CreatePartUri(New Uri(destFilename, UriKind.Relative))
@@ -745,7 +773,7 @@ Public Class Compression
     Public Shared Function AddFileToZip(ByVal zipFilename As String, ByVal fileToAdd As String) As Boolean
 
         Try
-            Dim contentType As String = findContentType(fileToAdd)
+            Dim contentType As String = getContentType(fileToAdd)
 
             Using zip As Package = System.IO.Packaging.Package.Open(zipFilename, FileMode.OpenOrCreate)
                 Dim destFilename As String = ".\" & Path.GetFileName(fileToAdd)
@@ -783,7 +811,7 @@ Public Class Compression
                 zip.DeletePart(uri)
             End If
 
-            Dim contentType As String = findContentType(fileToAdd)
+            Dim contentType As String = getContentType(fileToAdd)
 
             Dim part As PackagePart = zip.CreatePart(uri, contentType, CompressionOption.Normal)
             Using fileStream As New FileStream(fileToAdd, FileMode.Open, FileAccess.Read)
