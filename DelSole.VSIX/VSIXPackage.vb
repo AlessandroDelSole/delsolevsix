@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.IO, System.IO.Packaging
 Imports <xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+Imports System.IO.Compression
 
 ''' <summary>
 ''' Represents a VSIX package with its contents and metadata,
@@ -130,18 +131,6 @@ Public Class VSIXPackage
     ''' </summary>
     ''' <returns>SnippetInfoCollection</returns>
     Public Property CodeSnippets As SnippetInfoCollection
-
-    ''' <summary>
-    ''' The collection of contents (assets) that the VSIX container is going to install
-    ''' </summary>
-    ''' <returns></returns>
-    Private Property AssetList As AssetInfoCollection
-
-    ''' <summary>
-    ''' The collection of dependencies a VSIX relies on
-    ''' </summary>
-    ''' <returns></returns>
-    Private Property DependenciesList As DependencyInfoCollection
 
     ''' <summary>
     ''' The license agreement an user must accept to install the VSIX package.
@@ -649,19 +638,63 @@ Public Class VSIXPackage
     ''' <param name="sourcePackages"></param>
     ''' <param name="destinationPackage"></param>
     Public Shared Sub MergeVsix(sourcePackages() As String, destinationPackage As String)
+        Dim tempFolder = Path.GetTempPath
+        Dim allPackFolders As List(Of String) = Nothing
+        Dim newPackageDefinition As String = ""
+
         For Each fileName In sourcePackages
             'Check if all source packages exist
             If Not IO.File.Exists(fileName) Then
                 Throw New FileNotFoundException("File not found", fileName)
             End If
+        Next
 
+        For Each fileName In sourcePackages
             'Generate temp folder for each package
-            Dim newFolder = IO.Path.GetTempPath & ("\") & IO.Path.GetFileNameWithoutExtension(fileName)
+            Dim newFolder = tempFolder & ("\") & IO.Path.GetFileNameWithoutExtension(fileName)
+            If allPackFolders Is Nothing Then
+                allPackFolders = New List(Of String)
+            End If
+            allPackFolders.Add(newFolder)
 
             'Extract the VSIX package
-
+            ExtractVsix(fileName, newFolder)
         Next
+
+        For Each folder In allPackFolders
+            'Enumerate and read pkgdef from each unzipped folder
+            Dim pkgDef = IO.Directory.EnumerateFiles(folder, "*.pkgdef").FirstOrDefault
+            Dim pkgDefContent = My.Computer.FileSystem.ReadAllText(pkgDef)
+
+            'Concatenate the pkgdef
+            newPackageDefinition = newPackageDefinition & Environment.NewLine & pkgDefContent
+        Next
+
+        'Create temp pkgdef
+        Dim tempPkgdefName = tempFolder & IO.Path.GetFileNameWithoutExtension(destinationPackage) & ".pkgdef"
+        My.Computer.FileSystem.WriteAllText(tempPkgdefName, newPackageDefinition, False)
+
+        Using zip As Package = Package.Open(destinationPackage, FileMode.OpenOrCreate)
+            'Package the content of VSIX files into one package
+            For Each startFolder In allPackFolders
+                For Each ioFile In IO.Directory.EnumerateFiles(startFolder, "*.*")
+                    Compression.AddFileToZip(zip, ioFile)
+                Next
+            Next
+            'Add the pkgdef
+            Compression.AddFileToZip(zip, tempPkgdefName)
+        End Using
     End Sub
+
+    ''' <summary>
+    ''' Extract the content of the specified VSIX package into the specified folder
+    ''' </summary>
+    ''' <param name="fileName"></param>
+    ''' <param name="targetDirectory"></param>
+    Public Shared Sub ExtractVsix(fileName As String, targetDirectory As String)
+        ZipFile.ExtractToDirectory(fileName, targetDirectory)
+    End Sub
+
 End Class
 
 
