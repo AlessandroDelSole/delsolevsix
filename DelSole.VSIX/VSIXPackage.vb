@@ -2,6 +2,7 @@
 Imports System.IO, System.IO.Packaging
 Imports <xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
 Imports System.IO.Compression
+Imports Ionic.Zip
 
 ''' <summary>
 ''' Represents a VSIX package with its contents and metadata,
@@ -633,7 +634,7 @@ Public Class VSIXPackage
     End Sub
 
     ''' <summary>
-    ''' Merge the specified VSIX packages into one destination package
+    ''' [INCOMPLETE] Merge the specified VSIX packages into one destination package
     ''' </summary>
     ''' <param name="sourcePackages"></param>
     ''' <param name="destinationPackage"></param>
@@ -692,12 +693,61 @@ Public Class VSIXPackage
     ''' <param name="fileName"></param>
     ''' <param name="targetDirectory"></param>
     Public Shared Sub ExtractVsix(fileName As String, targetDirectory As String)
-        ZipFile.ExtractToDirectory(fileName, targetDirectory)
+        IO.Compression.ZipFile.ExtractToDirectory(fileName, targetDirectory)
     End Sub
 
+    ''' <summary>
+    ''' Convert an obsolete VSI package into a VSIX package. The source VSI package must contain only code snippets
+    ''' </summary>
+    ''' <param name="vsiFileName">The source .vsi pathname</param>
+    ''' <param name="vsixFileName">The target .vsix pathname</param>
+    Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String)
+
+        'Get a temporary folder
+        Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
+
+        'Extract the old vsi package into a temp folder
+        Dim oldVsi As New Ionic.Zip.ZipFile(vsiFileName)
+        oldVsi.ExtractAll(tempFolder)
+
+        'Are there any snippets?
+        Dim snippets = IO.Directory.EnumerateFiles(tempFolder, "*.*snippet")
+
+        'If not, throw
+        If snippets.Any = False Then
+            Throw New InvalidOperationException("The specified .vsi package does not contain any code snippets")
+        End If
+
+        Dim newVsixPackage As New VSIXPackage
+
+        'Has comments/EULA?
+        If oldVsi.Comment <> "" Or String.IsNullOrWhiteSpace(oldVsi.Comment) = False Then
+            My.Computer.FileSystem.WriteAllText(tempFolder & "\EULA.txt", oldVsi.Comment, False)
+            newVsixPackage.License = tempFolder & "\EULA.txt"
+        End If
+
+        'Iterate the list of extracted snippets from
+        'the old Vsi and populate a SnippetInfo collection
+        For Each oldSnip In snippets
+            Dim snipInfo As New SnippetInfo
+            snipInfo.SnippetDescription = SnippetInfo.GetSnippetDescription(oldSnip)
+            snipInfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(oldSnip)
+            snipInfo.SnippetPath = IO.Path.GetDirectoryName(oldSnip)
+            snipInfo.SnippetFileName = IO.Path.GetFileName(oldSnip)
+            newVsixPackage.CodeSnippets.Add(snipInfo)
+        Next
+
+        Dim defaultValue = IO.Path.GetFileNameWithoutExtension(vsiFileName)
+
+        newVsixPackage.PackageName = defaultValue
+        newVsixPackage.PackageDescription = defaultValue
+
+        'Generate a new Vsix package
+        newVsixPackage.Build(vsixFileName)
+    End Sub
 End Class
 
-
+#Region "Zip Support"
 ''' <summary>
 ''' Provides support for zip file compression
 ''' </summary>
@@ -882,3 +932,4 @@ Public Class Compression
     End Function
 
 End Class
+#End Region

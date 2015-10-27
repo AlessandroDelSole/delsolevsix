@@ -187,12 +187,29 @@ Public Class SnippetInfo
     ''' <param name="snippetFile"></param>
     ''' <returns></returns>
     Public Shared Function GetSnippetLanguage(snippetFile As String) As String
-        Dim doc As XDocument = XDocument.Load(snippetFile)
+        Try
+            Dim doc As XDocument = XDocument.Load(snippetFile)
 
-        Dim query = From line In doc...<Code>
-                    Select line.@Language
+            Dim query = From line In doc...<Code>
+                        Select line.@Language
 
-        Return query.FirstOrDefault.ToUpper
+            Return query.FirstOrDefault.ToUpper
+
+        Catch ex As Exception
+            Dim sn As String = My.Computer.FileSystem.ReadAllText(snippetFile)
+
+            If sn.ToUpper.Contains("CODE LANGUAGE=""VB""") Then
+                Return "VB"
+            ElseIf sn.ToUpper.Contains("CODE LANGUAGE=""CSHARP""") = True Then
+                Return "CSharp"
+            ElseIf sn.ToUpper.Contains("CODE LANGUAGE=""JAVASCRIPT""") = True Then
+                Return "JAVASCRIPT"
+            ElseIf sn.ToUpper.Contains("CODE LANGUAGE=""XML""") = True Then
+                Return "XML"
+            Else
+                Throw New NotSupportedException(snippetFile & " is not a supported snippet")
+            End If
+        End Try
 
     End Function
 
