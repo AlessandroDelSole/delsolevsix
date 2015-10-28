@@ -333,7 +333,8 @@ Public Class VSIXPackage
     ''' </summary>
     ''' <returns>String</returns>
     Private Function GetTempFolder() As String
-        Dim tempFolder = IO.Path.GetTempPath + "SnippetPackageBuilder"
+
+        Dim tempFolder = Path.Combine(IO.Path.GetTempPath, "DSVSIX")
         If IO.Directory.Exists(tempFolder) Then
             IO.Directory.Delete(tempFolder, True)
         End If
@@ -427,8 +428,12 @@ Public Class VSIXPackage
             VsixManifest.Elements.First.Add(<License><%= IO.Path.GetFileName(Me.License) %></License>)
         End If
 
-        'Save the manifest and content types to the temp folder
-        VsixManifest.Save(targetFolder + "\extension.vsixmanifest")
+        Try
+            'Save the manifest and content types to the temp folder
+            VsixManifest.Save(Path.Combine(targetFolder, "extension.vsixmanifest"))
+        Catch ex As Exception
+
+        End Try
     End Sub
 
     ''' <summary>
@@ -449,19 +454,20 @@ Public Class VSIXPackage
 
         'Copy assets to the temp folder
         If Me.License <> "" Then
-            IO.File.Copy(Me.License, tempFolder + "\" + IO.Path.GetFileName(Me.License))
+            IO.File.Copy(Me.License, Path.Combine(tempFolder,
+                                                  IO.Path.GetFileName(Me.License)))
         End If
 
         If Me.IconPath <> "" Then
-            IO.File.Copy(Me.IconPath, tempFolder + "\" + IO.Path.GetFileName(Me.IconPath))
+            IO.File.Copy(Me.IconPath, Path.Combine(tempFolder, IO.Path.GetFileName(Me.IconPath)))
         End If
 
         If Me.PreviewImagePath <> "" Then
-            IO.File.Copy(Me.PreviewImagePath, tempFolder + "\" + IO.Path.GetFileName(Me.PreviewImagePath))
+            IO.File.Copy(Me.PreviewImagePath, Path.Combine(tempFolder, IO.Path.GetFileName(Me.PreviewImagePath)))
         End If
 
         If Me.GettingStartedGuide <> "" Then
-            IO.File.Copy(Me.GettingStartedGuide, tempFolder + "\" + IO.Path.GetFileName(Me.GettingStartedGuide))
+            IO.File.Copy(Me.GettingStartedGuide, Path.Combine(tempFolder, IO.Path.GetFileName(Me.GettingStartedGuide)))
         End If
 
         'Create a subfolder that stores all snippets        
@@ -737,6 +743,7 @@ Public Class VSIXPackage
     ''' <param name="packageDescription">The Vsix description</param>
     ''' <param name="iconPath">The icon for the Vsix in the VS Gallery</param>
     ''' <param name="imagePath">The preview image for the Vsix in the VS Gallery</param>
+    ''' <param name="moreInfoUrl">The URL string for More Info</param>
     Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String, snippetFolderName As String,
                                packageAuthor As String, packageName As String, packageDescription As String,
                                iconPath As String, imagePath As String, moreInfoUrl As String)

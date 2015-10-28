@@ -35,7 +35,7 @@ Module Module1
         'Vsix.Build("C:\temp\Sample.vsix")
 
         VSIXPackage.Vsi2Vsix("C:\temp\VBWPFSnippets.vsi", "C:\temp\VBWPFSnippets.vsix",
-                             "VB WPF Snippets", Nothing, "VB Snippets for WPF", "A common set of WPF Snippets for VB",
+                             "VB WPF Snippets", "Alessandro Del Sole", "VB Snippets for WPF", "A common set of WPF Snippets for VB",
                              Nothing, Nothing, "https://github.com/alessandrodelsole/delsolevsix")
         Console.WriteLine("Package created. Starting...")
         Process.Start("C:\temp\VBWPFSnippets.vsix")
