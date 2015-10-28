@@ -53,14 +53,14 @@ Public Class VSIXPackage
     ''' The name of the VSIX package. 
     ''' </summary>
     ''' <returns>String</returns>
-    Public Property PackageName As String
+    Public Property ProductName As String
         Get
             Return _packageName
         End Get
         Set(value As String)
             _packageName = value
-            OnPropertyChanged("PackageName")
-            CheckValue("PackageName")
+            OnPropertyChanged("ProductName")
+            CheckValue("ProductName")
         End Set
     End Property
 
@@ -299,8 +299,8 @@ Public Class VSIXPackage
     ''' <returns>String</returns>
     Public ReadOnly Property PackageID As String
         Get
-            If Me.PackageName IsNot Nothing Then
-                Dim noSpaces = Me.PackageName.Trim()
+            If Me.ProductName IsNot Nothing Then
+                Dim noSpaces = Me.ProductName.Trim()
                 noSpaces = noSpaces.Replace(" ", "")
                 Return noSpaces + ".." + Me.PackageGuid.ToString
             Else
@@ -315,10 +315,11 @@ Public Class VSIXPackage
     ''' <returns></returns>
     Private ReadOnly Property PkgDefName As String
         Get
-            If Me.PackageName IsNot Nothing Then
-                Dim noSpaces = Me.PackageName.Trim()
+            If Me.ProductName IsNot Nothing Then
+                Dim noSpaces = Me.ProductName.Trim()
                 noSpaces = noSpaces.Replace(" ", "")
-                Return "Snippet\" + noSpaces + ".pkgdef"
+                'Return "Snippet\" + noSpaces + ".pkgdef"
+                Return noSpaces + ".pkgdef"
             Else
                 Return String.Empty
             End If
@@ -371,8 +372,8 @@ Public Class VSIXPackage
         Try
             'Generate a .pkgdef file content based on the language of the 
             'first snippet in the list
-            Dim noSpaces = Me.PackageName.Trim()
-            noSpaces = noSpaces.Replace(" ", "")
+            'Dim noSpaces = Me.ProductName.Trim()
+            'noSpaces = noSpaces.Replace(" ", "")
             Dim lang As String
             'Language literal is the same of .snippet files, except for Visual Basic
             If Me.CodeSnippets.First.SnippetLanguage.ToLower = "vb" Then
@@ -380,10 +381,9 @@ Public Class VSIXPackage
             Else
                 lang = Me.CodeSnippets.First.SnippetLanguage
             End If
-            Dim packageDef As String = "[$RootKey$\Languages\CodeExpansions\" + lang + "\Paths]" + Environment.NewLine + Chr(34) + noSpaces + Chr(34) + "=""$PackageFolder$"""
-            'Dim packageDefVWD As String = "[$=HKEY_CURRENT_USER\Software\Microsoft\VWDExpress\11.0_Config\Languages\CodeExpansions\" + lang + "\Paths]" + Environment.NewLine + Chr(34) + noSpaces + Chr(34) + "=""$PackageFolder$"""
+            Dim packageDef As String = "[$RootKey$\Languages\CodeExpansions\" + lang + "\Paths]" + Environment.NewLine + Chr(34) + IO.Path.GetFileNameWithoutExtension(PkgDefName) + Chr(34) + "=""$PackageFolder$"""
 
-            Dim packageDefPathName = snippetFolder + "\" + noSpaces + ".pkgdef"
+            Dim packageDefPathName = snippetFolder + "\" + PkgDefName
             My.Computer.FileSystem.WriteAllText(packageDefPathName, packageDef, False)
         Catch ex As Exception
             Throw
@@ -400,7 +400,7 @@ Public Class VSIXPackage
         Dim VsixManifest As XElement = <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
                                            <Metadata>
                                                <Identity Id=<%= Me.PackageID %> Version="1.0" Language="en-US" Publisher=<%= Me.PackageAuthor %>/>
-                                               <DisplayName><%= Me.PackageName %></DisplayName>
+                                               <DisplayName><%= Me.ProductName %></DisplayName>
                                                <Description xml:space="preserve"><%= Me.PackageDescription %></Description>
                                                <GettingStartedGuide><%= Me.GettingStartedGuide %></GettingStartedGuide>
                                                <Icon><%= IO.Path.GetFileName(Me.IconPath) %></Icon>
@@ -417,7 +417,7 @@ Public Class VSIXPackage
                                                <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="4.5"/>
                                            </Dependencies>
                                            <Assets>
-                                               <Asset Type="Microsoft.VisualStudio.VsPackage" Path=<%= Me.PkgDefName %>/>
+                                               <Asset Type="Microsoft.VisualStudio.VsPackage" Path=<%= "Snippets\" & Me.PkgDefName %>/>
                                            </Assets>
                                        </PackageManifest>
 
@@ -436,6 +436,10 @@ Public Class VSIXPackage
     ''' </summary>
     ''' <param name="fileName"></param>
     Public Sub Build(fileName As String)
+        If HasErrors Then
+            Throw New InvalidOperationException("Cannot build the VSIX package. The current instance of the VSIXPackage class has errors that must be fixed.")
+        End If
+
         'Create a temporary folder that stores all the archive content
         'and that will be later zipped into a VSIX
         Dim tempFolder = GetTempFolder()
@@ -565,11 +569,11 @@ Public Class VSIXPackage
     ''' <param name="value"></param>
     Private Sub CheckValue(ByVal value As String)
         Select Case value
-            Case Is = "PackageName"
-                If Me.PackageName = "" Or String.IsNullOrEmpty(Me.PackageName) Then
-                    Me.AddError("PackageName", "Value cannot be null")
+            Case Is = "ProductName"
+                If Me.ProductName = "" Or String.IsNullOrEmpty(Me.ProductName) Then
+                    Me.AddError("ProductName", "Value cannot be null")
                 Else
-                    Me.RemoveError("PackageName")
+                    Me.RemoveError("ProductName")
                 End If
             Case Is = "PackageDescription"
                 If Me.PackageDescription = "" Or String.IsNullOrEmpty(Me.PackageDescription) Then
@@ -604,7 +608,7 @@ Public Class VSIXPackage
         Me.PackageAuthor = My.Computer.Name
         Me.PackageGuid = Guid.NewGuid
         Me.PackageVersion = "1.0"
-        Me.PackageName = "My sample package"
+        Me.ProductName = "My sample package"
         Me.PackageDescription = "Package description goes here"
         Me.SnippetFolderName = "My custom snippets"
     End Sub
@@ -697,18 +701,52 @@ Public Class VSIXPackage
     End Sub
 
     ''' <summary>
+    ''' Fix very old .snippet files that might miss the utf-8 encoding specification
+    ''' and that might have an EOF terminator that can't be used with .NET
+    ''' </summary>
+    ''' <param name="snippetFileName"></param>
+    Private Shared Sub FixSnippetTerminatorAndEncoding(snippetFileName As String)
+        'Read the specified snippet file
+        Dim txt = My.Computer.FileSystem.ReadAllText(snippetFileName)
+        'If the last char in file is not >,
+        If Asc(txt.Last) <> 62 Then
+            'Create a new string content and rewrite the .snippet file
+            Dim newString As New String(txt.Take(txt.Count - 1).ToArray)
+            My.Computer.FileSystem.WriteAllText(snippetFileName, newString, False)
+        End If
+
+        'Load the snippet file
+        Dim xdoc = XDocument.Load(snippetFileName)
+        'Adjust the declaration
+        Dim xdecl As New XDeclaration(xdoc.Declaration)
+        xdecl.Encoding = "utf-8"
+
+        xdoc.Declaration = xdecl
+
+        xdoc.Save(snippetFileName)
+    End Sub
+
+    ''' <summary>
     ''' Convert an obsolete VSI package into a VSIX package. The source VSI package must contain only code snippets
     ''' </summary>
     ''' <param name="vsiFileName">The source .vsi pathname</param>
     ''' <param name="vsixFileName">The target .vsix pathname</param>
-    Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String)
+    ''' <param name="snippetFolderName">The folder name that appears inside IntelliSense</param>
+    ''' <param name="packageAuthor">The Vsix author</param>
+    ''' <param name="packageName">The Vsix product name</param>
+    ''' <param name="packageDescription">The Vsix description</param>
+    ''' <param name="iconPath">The icon for the Vsix in the VS Gallery</param>
+    ''' <param name="imagePath">The preview image for the Vsix in the VS Gallery</param>
+    Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String, snippetFolderName As String,
+                               packageAuthor As String, packageName As String, packageDescription As String,
+                               iconPath As String, imagePath As String, moreInfoUrl As String)
 
         'Get a temporary folder
         Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
 
         'Extract the old vsi package into a temp folder
         Dim oldVsi As New Ionic.Zip.ZipFile(vsiFileName)
-        oldVsi.ExtractAll(tempFolder)
+        oldVsi.ExtractAll(tempFolder, ExtractExistingFileAction.OverwriteSilently)
 
         'Are there any snippets?
         Dim snippets = IO.Directory.EnumerateFiles(tempFolder, "*.*snippet")
@@ -729,6 +767,10 @@ Public Class VSIXPackage
         'Iterate the list of extracted snippets from
         'the old Vsi and populate a SnippetInfo collection
         For Each oldSnip In snippets
+            'Add the proper utf-8 encoding to the snippet file
+            FixSnippetTerminatorAndEncoding(oldSnip)
+
+            'Generate a new SnippetInfo object per snippet
             Dim snipInfo As New SnippetInfo
             snipInfo.SnippetDescription = SnippetInfo.GetSnippetDescription(oldSnip)
             snipInfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(oldSnip)
@@ -739,8 +781,40 @@ Public Class VSIXPackage
 
         Dim defaultValue = IO.Path.GetFileNameWithoutExtension(vsiFileName)
 
-        newVsixPackage.PackageName = defaultValue
-        newVsixPackage.PackageDescription = defaultValue
+        'Populate package metadata
+        If packageAuthor <> "" Or String.IsNullOrEmpty(packageAuthor) = False Then
+            newVsixPackage.PackageAuthor = packageAuthor
+        End If
+
+        If packageName <> "" Or String.IsNullOrEmpty(packageName) = False Then
+            newVsixPackage.ProductName = packageName
+        Else
+            newVsixPackage.ProductName = defaultValue
+        End If
+
+        If packageDescription <> "" Or String.IsNullOrEmpty(packageDescription) = False Then
+            newVsixPackage.PackageDescription = packageDescription
+        Else
+            newVsixPackage.PackageDescription = defaultValue
+        End If
+
+        If snippetFolderName = "" Or String.IsNullOrEmpty(snippetFolderName) Then
+            newVsixPackage.SnippetFolderName = defaultValue
+        Else
+            newVsixPackage.SnippetFolderName = snippetFolderName
+        End If
+
+        If iconPath <> "" Or String.IsNullOrEmpty(iconPath) = False Then
+            newVsixPackage.IconPath = iconPath
+        End If
+
+        If imagePath <> "" Or String.IsNullOrEmpty(imagePath) = False Then
+            newVsixPackage.PreviewImagePath = imagePath
+        End If
+
+        If moreInfoUrl <> "" Or String.IsNullOrEmpty(moreInfoUrl) = False Then
+            newVsixPackage.MoreInfoURL = moreInfoUrl
+        End If
 
         'Generate a new Vsix package
         newVsixPackage.Build(vsixFileName)
