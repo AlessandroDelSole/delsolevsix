@@ -30,14 +30,9 @@ Public Class VSIXPackage
     Public Event VsixGenerationCompleted()
 
     ''' <summary>
-    ''' Raised when the vsi to vsix conversion process starts
+    ''' Raised when the <seealso cref="GenerateVsixManifest(String)"/> completes generating the VSIX manifest file
     ''' </summary>
-    Public Shared Event VsiConversionStarted()
-
-    ''' <summary>
-    ''' Raised right after the vsi to vsix conversion process completes
-    ''' </summary>
-    Public Shared Event VsiConversionCompleted()
+    Public Event ManifestGenerationCompleted()
 
     ''' <summary>
     ''' Raised when a file is packaged into the Vsix archive
@@ -485,8 +480,9 @@ Public Class VSIXPackage
         Try
             'Save the manifest and content types to the temp folder
             VsixManifest.Save(Path.Combine(targetFolder, "extension.vsixmanifest"))
+            RaiseEvent ManifestGenerationCompleted()
         Catch ex As Exception
-
+            Throw
         End Try
     End Sub
 
@@ -730,8 +726,6 @@ Public Class VSIXPackage
             Throw New ArgumentException("File not found", NameOf(vsiFileName))
         End If
 
-        RaiseEvent VsiConversionStarted()
-
         'Get a temporary folder
         Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
 
@@ -809,8 +803,6 @@ Public Class VSIXPackage
 
         'Generate a new Vsix package
         newVsixPackage.Build(vsixFileName)
-
-        RaiseEvent VsiConversionCompleted()
     End Sub
 #End Region
 

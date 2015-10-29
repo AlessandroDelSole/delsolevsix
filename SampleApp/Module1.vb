@@ -43,13 +43,13 @@ Module Module1
         '                     Nothing, Nothing, "https://github.com/alessandrodelsole/delsolevsix")
         'Console.WriteLine("Package created. Signing...")
 
-        'Dim pwd = "SignExtension".ToCharArray
-        'Dim securePwd As New Security.SecureString
-        'For Each cc In pwd
-        '    securePwd.AppendChar(cc)
-        'Next
+        Dim pwd = "SignExtension".ToCharArray
+        Dim securePwd As New Security.SecureString
+        For Each cc In pwd
+            securePwd.AppendChar(cc)
+        Next
 
-        'VSIXPackage.SignVsix("C:\temp\VBWPFSnippets.vsix", "C:\temp\SignExtension.pfx", securePwd)
+        VSIXPackage.SignVsix("C:\temp\Sample.vsix", "C:\temp\SignExtension.pfx", securePwd)
         Console.WriteLine("Done")
         Console.ReadLine()
     End Sub
