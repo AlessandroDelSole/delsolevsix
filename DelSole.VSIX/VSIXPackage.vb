@@ -500,6 +500,10 @@ Public Class VSIXPackage
             Throw New InvalidOperationException(errorMessage)
         End If
 
+        If Not Me.CodeSnippets.Any Then
+            Throw New InvalidOperationException("The CodeSnippets property contains 0 snippets")
+        End If
+
         RaiseEvent VsixGenerationStarted()
 
         'Create a temporary folder that stores all the archive content
