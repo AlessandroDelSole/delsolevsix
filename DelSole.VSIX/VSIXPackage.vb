@@ -20,6 +20,32 @@ Public Class VSIXPackage
     Public Event PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Implements INotifyPropertyChanged.PropertyChanged
 
     ''' <summary>
+    ''' Raised when the Vsix generation process starts
+    ''' </summary>
+    Public Event VsixGenerationStarted()
+    ''' <summary>
+    ''' Raised right after the Vsix generation process completes
+    ''' </summary>
+    Public Event VsixGenerationCompleted()
+
+    ''' <summary>
+    ''' Raised when the vsi to vsix conversion process starts
+    ''' </summary>
+    Public Shared Event VsiConversionStarted()
+
+    ''' <summary>
+    ''' Raised right after the vsi to vsix conversion process completes
+    ''' </summary>
+    Public Shared Event VsiConversionCompleted()
+
+    ''' <summary>
+    ''' Raised when a file is packaged into the Vsix archive
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    Public Event FileAddedToPackage(sender As Object, e As FileAddedToPackageEventArgs)
+
+    ''' <summary>
     ''' Raise the PropertyChanged event when instance data changes
     ''' </summary>
     ''' <param name="name"></param>
@@ -59,8 +85,8 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _packageName = value
-            OnPropertyChanged("ProductName")
-            CheckValue("ProductName")
+            OnPropertyChanged(NameOf(ProductName))
+            CheckValue(NameOf(ProductName))
         End Set
     End Property
 
@@ -74,8 +100,8 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _snippetFolderName = value
-            OnPropertyChanged("SnippetFolderName")
-            CheckValue("SnippetFolderName")
+            OnPropertyChanged(NameOf(SnippetFolderName))
+            CheckValue(NameOf(SnippetFolderName))
         End Set
     End Property
 
@@ -90,8 +116,8 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             Me._packageDescription = value
-            OnPropertyChanged("PackageDescription")
-            CheckValue("PackageDescription")
+            OnPropertyChanged(NameOf(PackageDescription))
+            CheckValue(NameOf(PackageDescription))
         End Set
     End Property
 
@@ -105,8 +131,8 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             Me._packageVersion = value
-            OnPropertyChanged("PackageVersion")
-            CheckValue("PackageVersion")
+            OnPropertyChanged(NameOf(PackageVersion))
+            CheckValue(NameOf(PackageVersion))
         End Set
     End Property
 
@@ -120,8 +146,8 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             Me._packageAuthor = value
-            OnPropertyChanged("PackageAuthor")
-            CheckValue("PackageAuthor")
+            OnPropertyChanged(NameOf(PackageAuthor))
+            CheckValue(NameOf(PackageAuthor))
         End Set
     End Property
 
@@ -144,7 +170,7 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             Me._license = value
-            OnPropertyChanged("License")
+            OnPropertyChanged(NameOf(License))
         End Set
     End Property
 
@@ -159,7 +185,7 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _iconPath = value
-            OnPropertyChanged("IconPath")
+            OnPropertyChanged(NameOf(IconPath))
         End Set
     End Property
 
@@ -174,7 +200,7 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _previewImagePath = value
-            OnPropertyChanged("PreviewImagePath")
+            OnPropertyChanged(NameOf(PreviewImagePath))
         End Set
     End Property
 
@@ -189,7 +215,7 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _releaseNotes = value
-            OnPropertyChanged("ReleaseNotes")
+            OnPropertyChanged(NameOf(ReleaseNotes))
         End Set
     End Property
 
@@ -204,7 +230,7 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _moreInfoURl = value
-            OnPropertyChanged("MoreInfoURL")
+            OnPropertyChanged(NameOf(MoreInfoURL))
         End Set
     End Property
 
@@ -219,7 +245,7 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _gettingStartedGuide = value
-            OnPropertyChanged("GettingStartedGuide")
+            OnPropertyChanged(NameOf(GettingStartedGuide))
         End Set
     End Property
 
@@ -234,7 +260,7 @@ Public Class VSIXPackage
         End Get
         Set(value As String)
             _tags = value
-            OnPropertyChanged("Tags")
+            OnPropertyChanged(NameOf(Tags))
         End Set
     End Property
 
@@ -249,7 +275,7 @@ Public Class VSIXPackage
         End Get
         Set(value As Boolean)
             _requiresAdminElevation = value
-            OnPropertyChanged("RequiresAdminElevation")
+            OnPropertyChanged(NameOf(RequiresAdminElevation))
         End Set
     End Property
 
@@ -265,7 +291,7 @@ Public Class VSIXPackage
         End Get
         Set(value As Boolean)
             _requiresWindowsInstaller = value
-            OnPropertyChanged("RequiresWindowsInstaller")
+            OnPropertyChanged(NameOf(RequiresWindowsInstaller))
         End Set
     End Property
 
@@ -351,15 +377,15 @@ Public Class VSIXPackage
     Private Sub CopySnippets(tempFolder As String)
         Try
             'Create a subfolder that stores all snippets
-            Me.snippetFolder = tempFolder + "\" + Me.SnippetFolderName.Replace(" ", "%20")
+            Me.snippetFolder = Path.Combine(tempFolder, Me.SnippetFolderName.Replace(" ", "%20"))
             IO.Directory.CreateDirectory(snippetFolder)
 
             'Copy all snippets in the collection to the above subfolder
             For Each item1 In Me.CodeSnippets
-                Dim tempName As String = snippetFolder + "\" + item1.SnippetFileName.Replace(" ", "%20")
+                Dim tempName As String = Path.Combine(snippetFolder, item1.SnippetFileName.Replace(" ", "%20"))
                 If IO.File.Exists(tempName) Then IO.File.Delete(tempName)
 
-                IO.File.Copy(item1.SnippetPath + "\" + item1.SnippetFileName, tempName)
+                IO.File.Copy(Path.Combine(item1.SnippetPath, item1.SnippetFileName), tempName)
             Next
         Catch ex As Exception
             Throw
@@ -384,7 +410,7 @@ Public Class VSIXPackage
             End If
             Dim packageDef As String = "[$RootKey$\Languages\CodeExpansions\" + lang + "\Paths]" + Environment.NewLine + Chr(34) + IO.Path.GetFileNameWithoutExtension(PkgDefName) + Chr(34) + "=""$PackageFolder$"""
 
-            Dim packageDefPathName = snippetFolder + "\" + PkgDefName
+            Dim packageDefPathName = Path.Combine(snippetFolder, PkgDefName)
             My.Computer.FileSystem.WriteAllText(packageDefPathName, packageDef, False)
         Catch ex As Exception
             Throw
@@ -445,6 +471,8 @@ Public Class VSIXPackage
             Throw New InvalidOperationException("Cannot build the VSIX package. The current instance of the VSIXPackage class has errors that must be fixed.")
         End If
 
+        RaiseEvent VsixGenerationStarted()
+
         'Create a temporary folder that stores all the archive content
         'and that will be later zipped into a VSIX
         Dim tempFolder = GetTempFolder()
@@ -478,6 +506,7 @@ Public Class VSIXPackage
 
         'Zip the package into VSIX
         Me.Zip(fileName, tempFolder)
+        RaiseEvent VsixGenerationCompleted()
     End Sub
 
     ''' <summary>
@@ -491,10 +520,12 @@ Public Class VSIXPackage
         Using zip As Package = Package.Open(zipFileName, FileMode.OpenOrCreate)
             For Each ioFile In IO.Directory.EnumerateFiles(startFolder, "*.*")
                 Compression.AddFileToZip(zip, ioFile)
+                RaiseEvent FileAddedToPackage(Me, New FileAddedToPackageEventArgs(ioFile))
             Next
 
             For Each ioFile In IO.Directory.EnumerateFiles(snippetFolder, "*.*")
                 Compression.AddFileToZip(zip, ioFile, Me.SnippetFolderName.Replace(" ", "%20"))
+                RaiseEvent FileAddedToPackage(Me, New FileAddedToPackageEventArgs(ioFile))
             Next
         End Using
     End Sub
@@ -649,6 +680,8 @@ Public Class VSIXPackage
     ''' <param name="sourcePackages"></param>
     ''' <param name="destinationPackage"></param>
     Public Shared Sub MergeVsix(sourcePackages() As String, destinationPackage As String)
+        Throw New NotImplementedException
+
         Dim tempFolder = Path.GetTempPath
         Dim allPackFolders As List(Of String) = Nothing
         Dim newPackageDefinition As String = ""
@@ -747,6 +780,11 @@ Public Class VSIXPackage
     Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String, snippetFolderName As String,
                                packageAuthor As String, packageName As String, packageDescription As String,
                                iconPath As String, imagePath As String, moreInfoUrl As String)
+        If Not IO.File.Exists(vsiFileName) Then
+            Throw New ArgumentException("File not found", NameOf(vsiFileName))
+        End If
+
+        RaiseEvent VsiConversionStarted()
 
         'Get a temporary folder
         Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
@@ -825,7 +863,62 @@ Public Class VSIXPackage
 
         'Generate a new Vsix package
         newVsixPackage.Build(vsixFileName)
+
+        RaiseEvent VsiConversionCompleted()
     End Sub
+
+#Region "VSIX Signing"
+    'Portions of this code have been found on Jeff Wilcox's blog at
+    'http://www.jeff.wilcox.name/2010/03/vsixcodesigning/
+
+    Private Shared Function ValidateSignatures(package As Package) As Boolean
+        Dim signatureManager As New PackageDigitalSignatureManager(package)
+        Return signatureManager.IsSigned AndAlso signatureManager.VerifySignatures(True) = VerifyResult.Success
+    End Function
+
+    Private Shared Sub SignAllParts(package As Package, pfx As String, password As Security.SecureString, timestamp As String)
+        Dim signatureManager As New PackageDigitalSignatureManager(package)
+        signatureManager.CertificateOption = CertificateEmbeddingOption.InSignaturePart
+
+        Dim toSign As New List(Of Uri)()
+        For Each packagePart As PackagePart In package.GetParts()
+            toSign.Add(packagePart.Uri)
+        Next
+
+        toSign.Add(PackUriHelper.GetRelationshipPartUri(signatureManager.SignatureOrigin))
+        toSign.Add(signatureManager.SignatureOrigin)
+        toSign.Add(PackUriHelper.GetRelationshipPartUri(New Uri("/", UriKind.RelativeOrAbsolute)))
+
+        Try
+            signatureManager.Sign(toSign, New System.Security.Cryptography.X509Certificates.X509Certificate2(pfx, password))
+        Catch ex As System.Security.Cryptography.CryptographicException
+            Throw New System.Security.Cryptography.CryptographicException("Signing could not be completed: " & ex.Message)
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Sign a VSIX package with a digital signature. This must be a .pfx password-protected file
+    ''' </summary>
+    ''' <param name="vsixPackageName"></param>
+    ''' <param name="pfxFileName"></param>
+    ''' <param name="pfxPassword"></param>
+    Public Shared Sub SignVsix(vsixPackageName As String, pfxFileName As String, pfxPassword As Security.SecureString)
+        If Not IO.File.Exists(vsixPackageName) Then
+            Throw New ArgumentException("File not found", NameOf(vsixPackageName))
+        End If
+
+        If Not IO.File.Exists(pfxFileName) Then
+            Throw New ArgumentException("File not found", NameOf(pfxFileName))
+        End If
+
+        Using sourcePackage As Package = Package.Open(vsixPackageName, FileMode.Open)
+            SignAllParts(sourcePackage, pfxFileName, pfxPassword, "")
+            If Not ValidateSignatures(sourcePackage) Then
+                Throw New System.Security.Cryptography.CryptographicException("The digital signature is invalid.", "Invalid Signature")
+            End If
+        End Using
+    End Sub
+#End Region
 End Class
 
 #Region "Zip Support"
@@ -1014,3 +1107,4 @@ Public Class Compression
 
 End Class
 #End Region
+

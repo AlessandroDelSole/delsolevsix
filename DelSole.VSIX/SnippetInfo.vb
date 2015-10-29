@@ -3,7 +3,7 @@ Imports System.ComponentModel
 Imports <xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 
 ''' <summary>
-''' Represents full-fidelity information for a code snippet
+''' Structured representation of a code snippet file with full-fidelity
 ''' </summary>
 Public Class SnippetInfo
     Implements IDataErrorInfo
@@ -202,6 +202,8 @@ Public Class SnippetInfo
                 Return "VB"
             ElseIf sn.ToUpper.Contains("CODE LANGUAGE=""CSHARP""") = True Then
                 Return "CSharp"
+            ElseIf sn.ToUpper.Contains("CODE LANGUAGE=""SQL""") Then
+                Return "SQL"
             ElseIf sn.ToUpper.Contains("CODE LANGUAGE=""JAVASCRIPT""") = True Then
                 Return "JAVASCRIPT"
             ElseIf sn.ToUpper.Contains("CODE LANGUAGE=""XML""") = True Then
