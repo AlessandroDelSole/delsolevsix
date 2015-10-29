@@ -5,13 +5,14 @@ Imports System.IO.Compression
 Imports Ionic.Zip
 
 ''' <summary>
-''' Represents a VSIX package with its contents and metadata,
+''' Represent a VSIX package with its contents and metadata,
 ''' and provides methods for VSIX generation
 ''' </summary>
 Public Class VSIXPackage
     Implements INotifyPropertyChanged
     Implements IDataErrorInfo
 
+#Region "Events"
     ''' <summary>
     ''' Notify callers for changes
     ''' </summary>
@@ -52,6 +53,7 @@ Public Class VSIXPackage
     Protected Sub OnPropertyChanged(ByVal name As String)
         RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(name))
     End Sub
+#End Region
 
 #Region "Backing fields"
 
@@ -353,6 +355,32 @@ Public Class VSIXPackage
     End Property
 #End Region
 
+#Region "VSIX Generation"
+    ''' <summary>
+    ''' Return True if code snippets target more than one programming language
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function TestLanguageGroup() As Boolean
+        Dim query = From item In Me.CodeSnippets
+                    Group item By item.SnippetLanguage Into Count()
+                    Select SnippetLanguage, Count
+
+        If query.Count > 1 Then
+            Return False
+        Else
+            Return True
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Extract the content of the specified VSIX package into the specified folder
+    ''' </summary>
+    ''' <param name="fileName"></param>
+    ''' <param name="targetDirectory"></param>
+    Public Shared Sub ExtractVsix(fileName As String, targetDirectory As String)
+        IO.Compression.ZipFile.ExtractToDirectory(fileName, targetDirectory)
+    End Sub
+
     ''' <summary>
     ''' Create a temporary folder to handle package-required files.
     ''' If the folder already exists, it is first deleted
@@ -468,7 +496,8 @@ Public Class VSIXPackage
     ''' <param name="fileName"></param>
     Public Sub Build(fileName As String)
         If HasErrors Then
-            Throw New InvalidOperationException("Cannot build the VSIX package. The current instance of the VSIXPackage class has errors that must be fixed.")
+            Dim errorMessage = "Cannot build the VSIX package. The current instance of the VSIXPackage class has errors that must be fixed."
+            Throw New InvalidOperationException(errorMessage)
         End If
 
         RaiseEvent VsixGenerationStarted()
@@ -529,6 +558,7 @@ Public Class VSIXPackage
             Next
         End Using
     End Sub
+#End Region
 
 #Region "Validation"
     ''' <summary>
@@ -650,95 +680,7 @@ Public Class VSIXPackage
         Me.SnippetFolderName = "My custom snippets"
     End Sub
 
-    ''' <summary>
-    ''' Return True if code snippets target more than one programming language
-    ''' </summary>
-    ''' <returns></returns>
-    Public Function TestLanguageGroup() As Boolean
-        Dim query = From item In Me.CodeSnippets
-                    Group item By item.SnippetLanguage Into Count()
-                    Select SnippetLanguage, Count
-
-        If query.Count > 1 Then
-            Return False
-        Else
-            Return True
-        End If
-    End Function
-
-    ''' <summary>
-    ''' Merge the specified VSIX packages into the current VSIXPackage instance
-    ''' </summary>
-    ''' <param name="packages"></param>
-    Public Sub MergeVsix(packages() As String)
-        Throw New NotImplementedException
-    End Sub
-
-    ''' <summary>
-    ''' [INCOMPLETE] Merge the specified VSIX packages into one destination package
-    ''' </summary>
-    ''' <param name="sourcePackages"></param>
-    ''' <param name="destinationPackage"></param>
-    Public Shared Sub MergeVsix(sourcePackages() As String, destinationPackage As String)
-        Throw New NotImplementedException
-
-        Dim tempFolder = Path.GetTempPath
-        Dim allPackFolders As List(Of String) = Nothing
-        Dim newPackageDefinition As String = ""
-
-        For Each fileName In sourcePackages
-            'Check if all source packages exist
-            If Not IO.File.Exists(fileName) Then
-                Throw New FileNotFoundException("File not found", fileName)
-            End If
-        Next
-
-        For Each fileName In sourcePackages
-            'Generate temp folder for each package
-            Dim newFolder = tempFolder & ("\") & IO.Path.GetFileNameWithoutExtension(fileName)
-            If allPackFolders Is Nothing Then
-                allPackFolders = New List(Of String)
-            End If
-            allPackFolders.Add(newFolder)
-
-            'Extract the VSIX package
-            ExtractVsix(fileName, newFolder)
-        Next
-
-        For Each folder In allPackFolders
-            'Enumerate and read pkgdef from each unzipped folder
-            Dim pkgDef = IO.Directory.EnumerateFiles(folder, "*.pkgdef").FirstOrDefault
-            Dim pkgDefContent = My.Computer.FileSystem.ReadAllText(pkgDef)
-
-            'Concatenate the pkgdef
-            newPackageDefinition = newPackageDefinition & Environment.NewLine & pkgDefContent
-        Next
-
-        'Create temp pkgdef
-        Dim tempPkgdefName = tempFolder & IO.Path.GetFileNameWithoutExtension(destinationPackage) & ".pkgdef"
-        My.Computer.FileSystem.WriteAllText(tempPkgdefName, newPackageDefinition, False)
-
-        Using zip As Package = Package.Open(destinationPackage, FileMode.OpenOrCreate)
-            'Package the content of VSIX files into one package
-            For Each startFolder In allPackFolders
-                For Each ioFile In IO.Directory.EnumerateFiles(startFolder, "*.*")
-                    Compression.AddFileToZip(zip, ioFile)
-                Next
-            Next
-            'Add the pkgdef
-            Compression.AddFileToZip(zip, tempPkgdefName)
-        End Using
-    End Sub
-
-    ''' <summary>
-    ''' Extract the content of the specified VSIX package into the specified folder
-    ''' </summary>
-    ''' <param name="fileName"></param>
-    ''' <param name="targetDirectory"></param>
-    Public Shared Sub ExtractVsix(fileName As String, targetDirectory As String)
-        IO.Compression.ZipFile.ExtractToDirectory(fileName, targetDirectory)
-    End Sub
-
+#Region "Support for .vsi to .vsix conversion"
     ''' <summary>
     ''' Fix very old .snippet files that might miss the utf-8 encoding specification
     ''' and that might have an EOF terminator that can't be used with .NET
@@ -803,7 +745,7 @@ Public Class VSIXPackage
 
         Dim newVsixPackage As New VSIXPackage
 
-        'Has comments/EULA?
+        'In a .vsi, EULA is a zip comment. So, has it comments/EULA?
         If oldVsi.Comment <> "" Or String.IsNullOrWhiteSpace(oldVsi.Comment) = False Then
             My.Computer.FileSystem.WriteAllText(tempFolder & "\EULA.txt", oldVsi.Comment, False)
             newVsixPackage.License = tempFolder & "\EULA.txt"
@@ -866,6 +808,7 @@ Public Class VSIXPackage
 
         RaiseEvent VsiConversionCompleted()
     End Sub
+#End Region
 
 #Region "VSIX Signing"
     'Portions of this code have been found on Jeff Wilcox's blog at
@@ -919,13 +862,71 @@ Public Class VSIXPackage
         End Using
     End Sub
 #End Region
+
+#Region "Not implemented code."
+    '''' <summary>
+    '''' [INCOMPLETE] Merge the specified VSIX packages into one destination package
+    '''' </summary>
+    '''' <param name="sourcePackages"></param>
+    '''' <param name="destinationPackage"></param>
+    'Public Shared Sub MergeVsix(sourcePackages() As String, destinationPackage As String)
+    '    Throw New NotImplementedException
+
+    '    Dim tempFolder = Path.GetTempPath
+    '    Dim allPackFolders As List(Of String) = Nothing
+    '    Dim newPackageDefinition As String = ""
+
+    '    For Each fileName In sourcePackages
+    '        'Check if all source packages exist
+    '        If Not IO.File.Exists(fileName) Then
+    '            Throw New FileNotFoundException("File not found", fileName)
+    '        End If
+    '    Next
+
+    '    For Each fileName In sourcePackages
+    '        'Generate temp folder for each package
+    '        Dim newFolder = tempFolder & ("\") & IO.Path.GetFileNameWithoutExtension(fileName)
+    '        If allPackFolders Is Nothing Then
+    '            allPackFolders = New List(Of String)
+    '        End If
+    '        allPackFolders.Add(newFolder)
+
+    '        'Extract the VSIX package
+    '        ExtractVsix(fileName, newFolder)
+    '    Next
+
+    '    For Each folder In allPackFolders
+    '        'Enumerate and read pkgdef from each unzipped folder
+    '        Dim pkgDef = IO.Directory.EnumerateFiles(folder, "*.pkgdef").FirstOrDefault
+    '        Dim pkgDefContent = My.Computer.FileSystem.ReadAllText(pkgDef)
+
+    '        'Concatenate the pkgdef
+    '        newPackageDefinition = newPackageDefinition & Environment.NewLine & pkgDefContent
+    '    Next
+
+    '    'Create temp pkgdef
+    '    Dim tempPkgdefName = tempFolder & IO.Path.GetFileNameWithoutExtension(destinationPackage) & ".pkgdef"
+    '    My.Computer.FileSystem.WriteAllText(tempPkgdefName, newPackageDefinition, False)
+
+    '    Using zip As Package = Package.Open(destinationPackage, FileMode.OpenOrCreate)
+    '        'Package the content of VSIX files into one package
+    '        For Each startFolder In allPackFolders
+    '            For Each ioFile In IO.Directory.EnumerateFiles(startFolder, "*.*")
+    '                Compression.AddFileToZip(zip, ioFile)
+    '            Next
+    '        Next
+    '        'Add the pkgdef
+    '        Compression.AddFileToZip(zip, tempPkgdefName)
+    '    End Using
+    'End Sub
+#End Region
 End Class
 
 #Region "Zip Support"
 ''' <summary>
 ''' Provides support for zip file compression
 ''' </summary>
-Public Class Compression
+Friend Class Compression
 
     Const BUFFER_SIZE As Long = 4096
 
@@ -959,7 +960,7 @@ Public Class Compression
     ''' <param name="fileToAdd">the file name to add</param>
     ''' <param name="directoryFile">the target folder</param>
     ''' <returns>Boolean</returns>
-    Public Shared Function AddFileToZip(ByVal zip As Package,
+    Friend Shared Function AddFileToZip(ByVal zip As Package,
                              ByVal fileToAdd As String,
                              ByVal directoryFile As String) As Boolean
         Try
@@ -994,7 +995,7 @@ Public Class Compression
     ''' <param name="fileToAdd">the file name to add</param>
     ''' <param name="directoryFile">the target folder</param>
     ''' <returns>Boolean</returns>
-    Public Shared Function AddFileToZip(ByVal zipFilename As String,
+    Friend Shared Function AddFileToZip(ByVal zipFilename As String,
                                  ByVal fileToAdd As String,
                                  ByVal directoryFile As String) As Boolean
         Try
@@ -1027,7 +1028,7 @@ Public Class Compression
     ''' <param name="zipFileName">The target zip archive's name</param>
     ''' <param name="fileToAdd">the file name to add</param>
     ''' <returns>Boolean</returns>
-    Public Shared Function AddFileToZip(ByVal zipFilename As String, ByVal fileToAdd As String) As Boolean
+    Friend Shared Function AddFileToZip(ByVal zipFilename As String, ByVal fileToAdd As String) As Boolean
 
         Try
             Dim contentType As String = getContentType(fileToAdd)
@@ -1059,7 +1060,7 @@ Public Class Compression
     ''' <param name="zip">The target System.IO.Package zip archive</param>
     ''' <param name="fileToAdd">the file name to add</param>
     ''' <returns>Boolean</returns>
-    Public Shared Function AddFileToZip(ByVal zip As Package, ByVal fileToAdd As String) As Boolean
+    Friend Shared Function AddFileToZip(ByVal zip As Package, ByVal fileToAdd As String) As Boolean
 
         Try
             Dim destFilename As String = ".\" & Path.GetFileName(fileToAdd)
