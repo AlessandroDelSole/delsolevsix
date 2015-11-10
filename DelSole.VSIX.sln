@@ -15,6 +15,31 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SampleApp", "SampleApp\Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp_CS", "SampleApp_CS\SampleApp_CS.csproj", "{AEE2559E-A272-46EA-A52F-321584BA839E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C213E19E-0D29-4524-96D6-6C624AA645E2}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Temp\delsolevsix\0000000000.html = ..\..\Temp\delsolevsix\0000000000.html
+		..\..\Temp\delsolevsix\Assemblies.txt = ..\..\Temp\delsolevsix\Assemblies.txt
+		..\..\Temp\delsolevsix\DeclaredSymbols.txt = ..\..\Temp\delsolevsix\DeclaredSymbols.txt
+		..\..\Temp\delsolevsix\documentoutline.html = ..\..\Temp\delsolevsix\documentoutline.html
+		..\..\Temp\delsolevsix\Errors.txt = ..\..\Temp\delsolevsix\Errors.txt
+		..\..\Temp\delsolevsix\favicon.ico = ..\..\Temp\delsolevsix\favicon.ico
+		..\..\Temp\delsolevsix\Global.asax = ..\..\Temp\delsolevsix\Global.asax
+		..\..\Temp\delsolevsix\header.html = ..\..\Temp\delsolevsix\header.html
+		..\..\Temp\delsolevsix\Huffman.txt = ..\..\Temp\delsolevsix\Huffman.txt
+		..\..\Temp\delsolevsix\i.txt = ..\..\Temp\delsolevsix\i.txt
+		..\..\Temp\delsolevsix\index.html = ..\..\Temp\delsolevsix\index.html
+		..\..\Temp\delsolevsix\overview.html = ..\..\Temp\delsolevsix\overview.html
+		..\..\Temp\delsolevsix\ProcessedAssemblies.txt = ..\..\Temp\delsolevsix\ProcessedAssemblies.txt
+		..\..\Temp\delsolevsix\Projects.txt = ..\..\Temp\delsolevsix\Projects.txt
+		..\..\Temp\delsolevsix\results.html = ..\..\Temp\delsolevsix\results.html
+		..\..\Temp\delsolevsix\scripts.js = ..\..\Temp\delsolevsix\scripts.js
+		..\..\Temp\delsolevsix\SolutionExplorer.html = ..\..\Temp\delsolevsix\SolutionExplorer.html
+		..\..\Temp\delsolevsix\styles.css = ..\..\Temp\delsolevsix\styles.css
+		..\..\Temp\delsolevsix\TopReferencedAssemblies.txt = ..\..\Temp\delsolevsix\TopReferencedAssemblies.txt
+		..\..\Temp\delsolevsix\Web.config = ..\..\Temp\delsolevsix\Web.config
+		..\..\Temp\delsolevsix\website.publishproj = ..\..\Temp\delsolevsix\website.publishproj
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
