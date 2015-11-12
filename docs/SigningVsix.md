@@ -4,6 +4,7 @@ The DelSole.VSIX package allows signing an existing .vsix package with a digital
 
 In order to sign a .vsix package, you invoke the DelSole.VSIXPackage.SignVsix static method:
 
+    ```csharp
     DelSole.VSIXPackage.SignVsix("inputPackage.vsix", "certFile.pfx", "password");
 
 Where:
