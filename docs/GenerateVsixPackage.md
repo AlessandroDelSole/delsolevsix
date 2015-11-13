@@ -49,7 +49,7 @@ the product name, the package description, the version number, the license agree
             //Assign other properties here...
  ```
  
-##Building a VSIX package
+#Building a VSIX package
 Once you have populated the CodeSnippets property and once you have assigned the package metadata, you are ready to go! Building a .vsix is very simple, in fact you simply invoke the `VSIXPackage.Build` method, passing the target file name:
  
    ```csharp
@@ -57,3 +57,9 @@ Once you have populated the CodeSnippets property and once you have assigned the
             Vsix.Build("C:\\temp\\Sample.vsix");
  ```
  
+#Other Tools
+The DelSole.VSIX library also allows to digitally sign a .vsix package and to work with .vsi archives:
+
+[Signing a .vsix package](https://github.com/alessandrodelsole/delsolevsix/docs/signingvsix.md)
+
+[Extracting a .vsix package and Working with .vsi archives](https://github.com/alessandrodelsole/delsolevsix/docs/othertools.md)
