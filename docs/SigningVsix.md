@@ -1,4 +1,4 @@
- # Signing a .vsix package
+#Signing a .vsix package
 
 VSIX packages can be digitally signed with a X.509 certificate, through a password protected .pfx file. The DelSole.VSIX package allows signing an existing .vsix package by invoking the DelSole.VSIXPackage.SignVsix static method:
 
