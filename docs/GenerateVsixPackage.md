@@ -60,6 +60,6 @@ Once you have populated the CodeSnippets property and once you have assigned the
 #Other Tools
 The DelSole.VSIX library also allows to digitally sign a .vsix package and to work with .vsi archives:
 
-[Signing a .vsix package](https://github.com/alessandrodelsole/delsolevsix/docs/signingvsix.md)
+[Signing a .vsix package](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/SigningVsix.md)
 
-[Extracting a .vsix package and Working with .vsi archives](https://github.com/alessandrodelsole/delsolevsix/docs/othertools.md)
+[Extracting a .vsix package and Working with .vsi archives](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/OtherTools.md)
