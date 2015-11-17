@@ -857,64 +857,35 @@ Public Class VSIXPackage
             End If
         End Using
     End Sub
-#End Region
 
-#Region "Not implemented code."
-    '''' <summary>
-    '''' [INCOMPLETE] Merge the specified VSIX packages into one destination package
-    '''' </summary>
-    '''' <param name="sourcePackages"></param>
-    '''' <param name="destinationPackage"></param>
-    'Public Shared Sub MergeVsix(sourcePackages() As String, destinationPackage As String)
-    '    Throw New NotImplementedException
+    ''' <summary>
+    ''' Sign a VSIX package with a digital signature. This must be a .pfx password-protected file
+    ''' </summary>
+    ''' <param name="vsixPackageName"></param>
+    ''' <param name="pfxFileName"></param>
+    ''' <param name="pfxPassword"></param>
+    Public Shared Sub SignVsix(vsixPackageName As String, pfxFileName As String, pfxPassword As String)
+        If Not IO.File.Exists(vsixPackageName) Then
+            Throw New ArgumentException("File not found", NameOf(vsixPackageName))
+        End If
 
-    '    Dim tempFolder = Path.GetTempPath
-    '    Dim allPackFolders As List(Of String) = Nothing
-    '    Dim newPackageDefinition As String = ""
+        If Not IO.File.Exists(pfxFileName) Then
+            Throw New ArgumentException("File not found", NameOf(pfxFileName))
+        End If
 
-    '    For Each fileName In sourcePackages
-    '        'Check if all source packages exist
-    '        If Not IO.File.Exists(fileName) Then
-    '            Throw New FileNotFoundException("File not found", fileName)
-    '        End If
-    '    Next
+        Dim pwd = pfxPassword.ToCharArray
+        Dim securePwd As New Security.SecureString
+        For Each cc In pwd
+            securePwd.AppendChar(cc)
+        Next
 
-    '    For Each fileName In sourcePackages
-    '        'Generate temp folder for each package
-    '        Dim newFolder = tempFolder & ("\") & IO.Path.GetFileNameWithoutExtension(fileName)
-    '        If allPackFolders Is Nothing Then
-    '            allPackFolders = New List(Of String)
-    '        End If
-    '        allPackFolders.Add(newFolder)
-
-    '        'Extract the VSIX package
-    '        ExtractVsix(fileName, newFolder)
-    '    Next
-
-    '    For Each folder In allPackFolders
-    '        'Enumerate and read pkgdef from each unzipped folder
-    '        Dim pkgDef = IO.Directory.EnumerateFiles(folder, "*.pkgdef").FirstOrDefault
-    '        Dim pkgDefContent = My.Computer.FileSystem.ReadAllText(pkgDef)
-
-    '        'Concatenate the pkgdef
-    '        newPackageDefinition = newPackageDefinition & Environment.NewLine & pkgDefContent
-    '    Next
-
-    '    'Create temp pkgdef
-    '    Dim tempPkgdefName = tempFolder & IO.Path.GetFileNameWithoutExtension(destinationPackage) & ".pkgdef"
-    '    My.Computer.FileSystem.WriteAllText(tempPkgdefName, newPackageDefinition, False)
-
-    '    Using zip As Package = Package.Open(destinationPackage, FileMode.OpenOrCreate)
-    '        'Package the content of VSIX files into one package
-    '        For Each startFolder In allPackFolders
-    '            For Each ioFile In IO.Directory.EnumerateFiles(startFolder, "*.*")
-    '                Compression.AddFileToZip(zip, ioFile)
-    '            Next
-    '        Next
-    '        'Add the pkgdef
-    '        Compression.AddFileToZip(zip, tempPkgdefName)
-    '    End Using
-    'End Sub
+        Using sourcePackage As Package = Package.Open(vsixPackageName, FileMode.Open)
+            SignAllParts(sourcePackage, pfxFileName, securePwd, "")
+            If Not ValidateSignatures(sourcePackage) Then
+                Throw New System.Security.Cryptography.CryptographicException("The digital signature is invalid.", "Invalid Signature")
+            End If
+        End Using
+    End Sub
 #End Region
 End Class
 
