@@ -1,6 +1,6 @@
 # Generating code snippets (.snippet)
 
-The `DelSole.VSIX.SnippetTools.SnippetService.SaveSnippet` method creates a .snippet file compliant with the Code Snippet Schema Reference.
+The `DelSole.VSIX.SnippetTools.SnippetService.SaveSnippet` method creates a .snippet file compliant with the [Code Snippet Schema Reference](https://msdn.microsoft.com/en-us/library/ms171418.aspx).
 Following is an example:
 
   ```vb
