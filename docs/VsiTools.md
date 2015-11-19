@@ -9,7 +9,7 @@ The first two arguments for the method are the input .vsi file and the target .v
 
   ```csharp
     //Convert an old .vsi file into a .vsix package
-    VSIXPackage.Vsi2Vsix("C:\\temp\\VBWPFSnippets.vsi", "C:\\temp\\VBWPFSnippets.vsix",
+    VsiService.Vsi2Vsix("C:\\temp\\VBWPFSnippets.vsi", "C:\\temp\\VBWPFSnippets.vsix",
             "VB WPF Snippets", "Alessandro Del Sole", "VB Snippets for WPF", "A common set of WPF Snippets for VB",
             null, null, "https://github.com/alessandrodelsole/delsolevsix");
  ```
