@@ -31,37 +31,11 @@ Namespace SnippetTools
         End Function
 
         ''' <summary>
-        ''' Return a schema-compliant string representing the code snippet language
-        ''' </summary>
-        ''' <param name="snippetLanguage"></param>
-        ''' <returns>String</returns>
-        Private Shared Function ReturnSnippetLanguage(snippetLanguage As SnippetLanguages) As String
-            Dim codeSnippetLanguage As String = "VB"
-            Select Case snippetLanguage
-                Case SnippetLanguages.VB
-                    codeSnippetLanguage = "VB"
-                Case SnippetLanguages.CSharp
-                    codeSnippetLanguage = "CSharp"
-                Case SnippetLanguages.XML
-                    codeSnippetLanguage = "XML"
-                Case SnippetLanguages.SQL
-                    codeSnippetLanguage = "SQL"
-                Case SnippetLanguages.CPP
-                    codeSnippetLanguage = "CPP"
-                Case SnippetLanguages.HTML
-                    codeSnippetLanguage = "Html"
-                Case SnippetLanguages.JavaScript
-                    codeSnippetLanguage = "JavaScript"
-            End Select
-            Return codeSnippetLanguage
-        End Function
-
-        ''' <summary>
         ''' Create and save a code snippet file to disk.
         ''' </summary>
         ''' <param name="fileName">The target file name</param>
         ''' <param name="kind">The code snippet kind</param>
-        ''' <param name="snippetLanguage">The code snippet language</param>
+        ''' <param name="snippetLanguage">The code snippet language. Supported values are VB, CSharp, XML, CPP, JavaScript, SQL, HTML</param>
         ''' <param name="snippetTitle">The code snippet title</param>
         ''' <param name="snippetDescription">The code snippet description</param>
         ''' <param name="snippetHelpUrl">The code snippet help URL</param>
@@ -73,7 +47,7 @@ Namespace SnippetTools
         ''' <param name="declarations">A collection of replacements that will be highlighted in the IntelliSense</param>
         ''' <param name="keywords">A collection of keywords that IntelliSense may use to identify the snippet</param>
         Public Shared Sub SaveSnippet(fileName As String, kind As CodeSnippetKinds,
-                                snippetLanguage As SnippetLanguages, snippetTitle As String,
+                                snippetLanguage As String, snippetTitle As String,
                                 snippetDescription As String, snippetHelpUrl As String,
                                 snippetAuthor As String, snippetShortcut As String,
                                 snippetCode As String, importDirectives As [Imports],
@@ -81,7 +55,6 @@ Namespace SnippetTools
                                 keywords As IEnumerable(Of String))
 
             Dim snippetKind As String = ReturnSnippetKind(kind)
-            Dim codeSnippetLanguage As String = ReturnSnippetLanguage(snippetLanguage)
 
             Dim editedCode = snippetCode
             For Each decl In declarations
@@ -92,7 +65,7 @@ Namespace SnippetTools
                 keywords = New List(Of String) From {String.Empty}
             End If
 
-            Dim cdata As New XCData(snippetCode)
+            Dim cdata As New XCData(editedCode)
             Dim doc = <?xml version="1.0" encoding="utf-8"?>
                       <CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
                           <CodeSnippet Format="1.0.0">
@@ -143,7 +116,7 @@ Namespace SnippetTools
                                                      <Function><%= decl.Function %></Function>
                                                  </Literal> %>
                                   </Declarations>
-                                  <Code Language=<%= codeSnippetLanguage %> Kind=<%= snippetKind %>
+                                  <Code Language=<%= snippetLanguage %> Kind=<%= snippetKind %>
                                       Delimiter="$"></Code>
                               </Snippet>
                           </CodeSnippet>
@@ -167,19 +140,6 @@ Namespace SnippetTools
         TypeDeclaration
         File
         Any
-    End Enum
-
-    ''' <summary>
-    ''' Enumerate the supported programming languages
-    ''' </summary>
-    Public Enum SnippetLanguages
-        VB
-        CSharp
-        SQL
-        XML
-        CPP
-        JavaScript
-        HTML
     End Enum
 
     ''' <summary>
@@ -224,14 +184,14 @@ Namespace SnippetTools
     Public Class Declaration
         Implements INotifyPropertyChanged
 
-        Property Editable As Boolean = True
+        Public Property Editable As Boolean = True
 
         Private _id As String
 
         ''' <summary>
         ''' The replacement ID
         ''' </summary>
-        Property ID As String
+        Public Property ID As String
             Get
                 Return _id
             End Get
@@ -246,7 +206,7 @@ Namespace SnippetTools
         ''' The .NET type of the object 
         ''' </summary>
         ''' <returns></returns>
-        Property [Type] As String
+        Public Property [Type] As String
             Get
                 Return _type
             End Get
@@ -261,7 +221,7 @@ Namespace SnippetTools
         ''' A description explaining how the user can replace the code
         ''' </summary>
         ''' <returns></returns>
-        Property ToolTip As String
+        Public Property ToolTip As String
             Get
                 Return _toolTip
             End Get
@@ -276,7 +236,7 @@ Namespace SnippetTools
         ''' The default value for the replacement
         ''' </summary>
         ''' <returns></returns>
-        Property [Default] As String
+        Public Property [Default] As String
             Get
                 Return _default
             End Get
@@ -291,7 +251,7 @@ Namespace SnippetTools
         ''' A method that will be invoked when the snippet is inserted
         ''' </summary>
         ''' <returns></returns>
-        Property [Function] As String
+        Public Property [Function] As String
             Get
                 Return _function
             End Get
@@ -301,7 +261,7 @@ Namespace SnippetTools
             End Set
         End Property
 
-        Property ReplacementType As String = "Literal"
+        Public Property ReplacementType As String = "Literal"
 
         Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
     End Class
