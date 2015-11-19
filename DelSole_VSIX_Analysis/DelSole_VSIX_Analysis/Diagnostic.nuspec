@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>DelSole.VSIX</id>
-    <version>1.0.0.5</version>
+    <version>1.0.0.6</version>
     <title>Del Sole's VSIX Library for Code Snippets</title>
     <authors>Alessandro Del Sole</authors>
     <owners>Alessandro Del Sole</owners>
@@ -11,7 +11,7 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>The Del Sole's VSIX library helps generating VSIX packages that contain reusable code snippet files for Visual Studio. We provide integrated Roslyn code analysis for live issue detection as you type</description>
-    <releaseNotes>This release implements events about VSIX generation, removes not implemented methods, adds the possibility of signing a VSIX package with a .pfx file.</releaseNotes>
+    <releaseNotes>Bug fix: SnippetService.SaveSnippet is now static.</releaseNotes>
     <copyright>Copyright (C), 2015 Alessandro Del Sole</copyright>
     <tags>vsix, snippet, roslyn, analyzers, extensibility</tags>
     <dependencies>

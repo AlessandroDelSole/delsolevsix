@@ -12,7 +12,7 @@ Namespace SnippetTools
         ''' </summary>
         ''' <param name="kind"></param>
         ''' <returns>String</returns>
-        Private Function ReturnSnippetKind(kind As CodeSnippetKinds) As String
+        Private Shared Function ReturnSnippetKind(kind As CodeSnippetKinds) As String
             Dim snippetKind As String
             Select Case kind
                 Case CodeSnippetKinds.MethodBody
@@ -35,7 +35,7 @@ Namespace SnippetTools
         ''' </summary>
         ''' <param name="snippetLanguage"></param>
         ''' <returns>String</returns>
-        Private Function ReturnSnippetLanguage(snippetLanguage As SnippetLanguages) As String
+        Private Shared Function ReturnSnippetLanguage(snippetLanguage As SnippetLanguages) As String
             Dim codeSnippetLanguage As String = "VB"
             Select Case snippetLanguage
                 Case SnippetLanguages.VB
@@ -72,7 +72,7 @@ Namespace SnippetTools
         ''' <param name="references">A collection of Assembly references (VB Only). Use null for C#</param>
         ''' <param name="declarations">A collection of replacements that will be highlighted in the IntelliSense</param>
         ''' <param name="keywords">A collection of keywords that IntelliSense may use to identify the snippet</param>
-        Public Sub SaveSnippet(fileName As String, kind As CodeSnippetKinds,
+        Public Shared Sub SaveSnippet(fileName As String, kind As CodeSnippetKinds,
                                 snippetLanguage As SnippetLanguages, snippetTitle As String,
                                 snippetDescription As String, snippetHelpUrl As String,
                                 snippetAuthor As String, snippetShortcut As String,
