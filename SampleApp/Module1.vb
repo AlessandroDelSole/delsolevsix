@@ -1,7 +1,10 @@
-﻿Imports DelSole.VSIX
+﻿Imports DelSole.VSIX, DelSole.VSIX.VsiTools
 Module Module1
 
     Sub Main()
+        VSIXPackage.ExtractVsix("C:\temp\vbwpfsnippets.vsix", "C:\scac", False)
+        Console.ReadLine()
+
         'Create a SnippetInfo for each code snippet you want to package
         Dim Snippet1 As New SnippetInfo
         Snippet1.SnippetFileName = "UnprotectDocument.snippet"
@@ -38,7 +41,7 @@ Module Module1
         Vsix.Build("C:\temp\Sample.vsix")
         Console.WriteLine("Packaged with " & Vsix.CodeSnippets.Count & " snippets")
 
-        'VSIXPackage.Vsi2Vsix("C:\temp\VBWPFSnippets.vsi", "C:\temp\VBWPFSnippets.vsix",
+        'VsiService.Vsi2Vsix("C:\temp\VBWPFSnippets.vsi", "C:\temp\VBWPFSnippets.vsix",
         '                     "VB WPF Snippets", "Alessandro Del Sole", "VB Snippets for WPF", "A common set of WPF Snippets for VB",
         '                     Nothing, Nothing, "https://github.com/alessandrodelsole/delsolevsix")
         'Console.WriteLine("Package created. Signing...")

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DelSole.VSIX;
+using DelSole.VSIX.VsiTools;
 using System.Diagnostics;
 
 namespace SampleApp_CS
@@ -37,7 +38,7 @@ namespace SampleApp_CS
             Vsix.Build("C:\\temp\\Sample.vsix");
 
             //Convert an old .vsi file into a .vsix package
-            VSIXPackage.Vsi2Vsix("C:\\temp\\VBWPFSnippets.vsi", "C:\\temp\\VBWPFSnippets.vsix",
+            VsiService.Vsi2Vsix("C:\\temp\\VBWPFSnippets.vsi", "C:\\temp\\VBWPFSnippets.vsix",
                      "VB WPF Snippets", "Alessandro Del Sole", "VB Snippets for WPF", "A common set of WPF Snippets for VB",
                      null, null, "https://github.com/alessandrodelsole/delsolevsix");
             Console.WriteLine("Package created. Starting...");

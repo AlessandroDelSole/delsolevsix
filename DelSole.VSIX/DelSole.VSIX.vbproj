@@ -94,6 +94,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="SnippetInfo.vb" />
+    <Compile Include="SnippetService.vb" />
+    <Compile Include="VsiService.vb" />
     <Compile Include="VSIXPackage.vb" />
   </ItemGroup>
   <ItemGroup>
