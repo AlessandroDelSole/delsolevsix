@@ -57,9 +57,12 @@ Namespace SnippetTools
             Dim snippetKind As String = ReturnSnippetKind(kind)
 
             Dim editedCode = snippetCode
-            For Each decl In declarations
-                editedCode = editedCode.Replace(decl.Default, "$" & decl.ID & "$")
-            Next
+
+            If declarations.Any Then
+                For Each decl In declarations
+                    editedCode = editedCode.Replace(decl.Default, "$" & decl.ID & "$")
+                Next
+            End If
 
             If keywords Is Nothing Then
                 keywords = New List(Of String) From {String.Empty}
@@ -117,7 +120,7 @@ Namespace SnippetTools
                                                  </Literal> %>
                                   </Declarations>
                                   <Code Language=<%= snippetLanguage %> Kind=<%= snippetKind %>
-                                      Delimiter="$"></Code>
+                                      Delimiter="$"/>
                               </Snippet>
                           </CodeSnippet>
                       </CodeSnippets>
