@@ -1,7 +1,10 @@
 #Introducing the library
 
-The DelSole.VSIX library exposes the same-named namespace, which offers classes that enable generating a compiled .vsix package for both Visual Basic and C#. 
-At this time, the library only allows generating .vsix package that only contain IntelliSense code snippets for Visual Studio (.snippet, .cssnippet, .vbsnippet, .*snippet)
+The DelSole.VSIX library exposes three namespaces:
+`DelSole.VSIX`, which offers classes that enable generating a compiled .vsix package for both Visual Basic and C#. 
+At this time, the library only allows generating .vsix package that only contain IntelliSense code snippets for Visual Studio (.snippet, .cssnippet, .vbsnippet, .snippet)
+`DelSole.VSIX.SnippetTools`, which offers classes that enable generating reusable IntelliSense code snippets for Visual Studio (.snippet files).
+`DelSole.VSIX.VsiTools`, which offers classes that help interacting with the old-fashioned .vsi (Visual Studio Community Content Installer) packages, such as for converting .vsi into .vsix or extracting .vsi contents.
 
 #Understanding the VSIX format
 The VSIX (.vsix) file format is nothing but a .zip archive based on the Open XML conventions. A .vsix package must contain a .vsixmanifest XML file, which contains the package metadata and the list of files that must be packaged.
@@ -58,8 +61,10 @@ Once you have populated the CodeSnippets property and once you have assigned the
  ```
  
 #Other Tools
-The DelSole.VSIX library also allows to digitally sign a .vsix package and to work with .vsi archives:
+The DelSole.VSIX library also allows to digitally sign and extract a .vsix package,  to work with .vsi archives, and to generate code snippet files starting from source text:
 
-[Signing a .vsix package](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/SigningVsix.md)
+[Vsix Tools: signing and extracting .vsix packages](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/VsixTools.md)
 
-[Extracting a .vsix package and Working with .vsi archives](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/OtherTools.md)
+[Vsi Tools: converting .vsi to .vsix and extracting .vsi packages](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/VsiTools.md)
+
+[Generating code snippet files](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/SnippetTools.md)
