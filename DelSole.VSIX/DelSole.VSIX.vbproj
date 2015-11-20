@@ -77,7 +77,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileAddedToPackageEventArgs.vb" />
+    <Compile Include="Snippet_ObjectModel\CodeSnippet.vb" />
+    <Compile Include="Vsix_ObjectModel\FileAddedToPackageEventArgs.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -93,10 +94,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="SnippetInfo.vb" />
-    <Compile Include="SnippetService.vb" />
-    <Compile Include="VsiService.vb" />
-    <Compile Include="VSIXPackage.vb" />
+    <Compile Include="Snippet_ObjectModel\SnippetInfo.vb" />
+    <Compile Include="Snippet_ObjectModel\SnippetService.vb" />
+    <Compile Include="Vsi_ObjectModel\VsiService.vb" />
+    <Compile Include="Vsix_ObjectModel\VSIXPackage.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
