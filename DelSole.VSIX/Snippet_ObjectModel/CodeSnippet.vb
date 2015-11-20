@@ -41,5 +41,11 @@ Namespace SnippetTools
         <DisplayName("Kind")>
         <Description("Determine the kind of code snippet.")>
         Public Property Kind As CodeSnippetKinds
+
+        Public Sub New()
+            Keywords = ""
+            HelpUrl = ""
+            Kind = CodeSnippetKinds.MethodBody
+        End Sub
     End Class
 End Namespace

@@ -120,13 +120,10 @@ Namespace SnippetTools
                                                  </Literal> %>
                                   </Declarations>
                                   <Code Language=<%= snippetLanguage %> Kind=<%= snippetKind %>
-                                      Delimiter="$"/>
+                                      Delimiter="$"><%= cdata %></Code>
                               </Snippet>
                           </CodeSnippet>
                       </CodeSnippets>
-
-            doc...<Code>.First.Add(cdata)
-
             doc.Save(fileName)
         End Sub
     End Class
@@ -187,7 +184,16 @@ Namespace SnippetTools
     Public Class Declaration
         Implements INotifyPropertyChanged
 
-        Public Property Editable As Boolean = True
+        Private _editable As Boolean
+        Public Property Editable As Boolean
+            Get
+                Return _editable
+            End Get
+            Set(value As Boolean)
+                _editable = value
+                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Editable)))
+            End Set
+        End Property
 
         Private _id As String
 
@@ -264,9 +270,23 @@ Namespace SnippetTools
             End Set
         End Property
 
-        Public Property ReplacementType As String = "Literal"
+        Private _replacementType As String
+        Public Property ReplacementType As String
+            Get
+                Return _replacementType
+            End Get
+            Set(value As String)
+                _replacementType = value
+                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(ReplacementType)))
+            End Set
+        End Property
 
         Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+        Public Sub New()
+            Me.Editable = True
+            Me.ReplacementType = "Literal"
+        End Sub
     End Class
 
     ''' <summary>
