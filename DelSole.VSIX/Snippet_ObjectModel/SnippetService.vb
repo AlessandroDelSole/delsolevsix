@@ -1,5 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.ComponentModel
+Imports <xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 
 Namespace SnippetTools
     ''' <summary>

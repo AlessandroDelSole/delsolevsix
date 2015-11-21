@@ -473,10 +473,9 @@ Public Class VSIXPackage
                                            </Metadata>
                                            <Installation>
                                                <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[12.0,14.0]"/>
-                                               <InstallationTarget Version="[12.0,14.0]" Id="Microsoft.VisualStudio.VWDExpress"/>
-                                               <%= If(Me.CodeSnippets.First.SnippetLanguage.ToUpper = "JAVASCRIPT", Nothing, <InstallationTarget Version="[12.0,14.0]" Id="Microsoft.VisualStudio.VSWinDesktopExpress"/>) %>
-                                               <InstallationTarget Version="[12.0,14.0]" Id="Microsoft.VisualStudio.VPDExpress"/>
-                                               <InstallationTarget Version="[12.0,14.0]" Id="Microsoft.VisualStudio.VSWinExpress"/>
+                                               <InstallationTarget Version="[12.0,14.0,15.0)" Id="Microsoft.VisualStudio.VWDExpress"/>
+                                               <%= If(Me.CodeSnippets.First.SnippetLanguage.ToUpper = "JAVASCRIPT", Nothing, <InstallationTarget Version="[12.0,14.0,15.0)" Id="Microsoft.VisualStudio.VSWinDesktopExpress"/>) %>
+                                               <InstallationTarget Version="[12.0,14.0,15.0)" Id="Microsoft.VisualStudio.VSWinExpress"/>
                                            </Installation>
                                            <Dependencies>
                                                <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="4.5"/>
