@@ -398,6 +398,11 @@ Public Class VSIXPackage
         'Find GUID
         Dim guids As MatchCollection = Regex.Matches(vsix.PackageID, "(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}")
         vsix.PackageGuid = Guid.Parse(guids(0).Value)
+
+        'Find SnippetFolder
+        Dim subDirs = IO.Directory.EnumerateDirectories(tempVsixFolder)
+        vsix.snippetFolder = subDirs?.FirstOrDefault?.Replace("%20", " ")
+
         Return vsix
     End Function
 

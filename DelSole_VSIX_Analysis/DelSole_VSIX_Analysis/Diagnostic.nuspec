@@ -11,7 +11,7 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>The Del Sole's VSIX library helps generating VSIX packages that contain reusable code snippet files for Visual Studio. We provide integrated Roslyn code analysis for live issue detection as you type</description>
-    <releaseNotes>Implemented the OpenVsix method. Moved some properties from readonly to read/write</releaseNotes>
+    <releaseNotes>Fixed OpenVsix method to retrieve the original snippet folder</releaseNotes>
     <copyright>Copyright (C), 2015 Alessandro Del Sole</copyright>
     <tags>vsix, snippet, roslyn, analyzers, extensibility</tags>
     <dependencies>
