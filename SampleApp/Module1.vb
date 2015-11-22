@@ -2,6 +2,11 @@
 Module Module1
 
     Sub Main()
+        'Open an existing Vsix package and get an instance of VSIXPackage
+        Dim package = VSIXPackage.OpenVsix("c:\temp\wpc2015.vsix")
+        Console.ReadLine()
+
+        'Extract the whole content of a .vsix
         VSIXPackage.ExtractVsix("C:\temp\vbwpfsnippets.vsix", "C:\scac", False)
         Console.ReadLine()
 

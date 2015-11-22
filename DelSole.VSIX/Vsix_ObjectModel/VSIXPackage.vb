@@ -3,6 +3,7 @@ Imports System.IO, System.IO.Packaging
 Imports <xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
 Imports System.IO.Compression
 Imports Ionic.Zip
+Imports System.Text.RegularExpressions
 
 ''' <summary>
 ''' Represent a VSIX package with its contents and metadata,
@@ -294,12 +295,12 @@ Public Class VSIXPackage
 
 #End Region
 
-#Region "Auto-populated properties"
+#Region "Properties"
     ''' <summary>
     ''' Get a unique identifier for the VSIX package
     ''' </summary>
     ''' <returns>Guid</returns>
-    Public ReadOnly Property PackageGuid As Guid
+    Public Property PackageGuid As Guid
     ''' <summary>
     ''' Return the list of dependencies for the VSIX package
     ''' </summary>
@@ -317,37 +318,16 @@ Public Class VSIXPackage
     Public ReadOnly Property Targets As String
 
     ''' <summary>
-    ''' Return the VSIX package ID
+    ''' Get or Set the VSIX package ID
     ''' </summary>
     ''' <returns>String</returns>
-    Public ReadOnly Property PackageID As String
-        Get
-            If Me.ProductName IsNot Nothing Then
-                Dim noSpaces = Me.ProductName.Trim()
-                noSpaces = noSpaces.Replace(" ", "")
-                Return noSpaces + ".." + Me.PackageGuid.ToString
-            Else
-                Return String.Empty
-            End If
-        End Get
-    End Property
+    Public Property PackageID As String
 
     ''' <summary>
     ''' Return the package definition file name (.pkgdef)
     ''' </summary>
     ''' <returns></returns>
-    Private ReadOnly Property PkgDefName As String
-        Get
-            If Me.ProductName IsNot Nothing Then
-                Dim noSpaces = Me.ProductName.Trim()
-                noSpaces = noSpaces.Replace(" ", "")
-                'Return "Snippet\" + noSpaces + ".pkgdef"
-                Return noSpaces + ".pkgdef"
-            Else
-                Return String.Empty
-            End If
-        End Get
-    End Property
+    Private Property PkgDefName As String
 #End Region
 
 #Region "VSIX Generation"
@@ -365,6 +345,60 @@ Public Class VSIXPackage
         Else
             Return True
         End If
+    End Function
+
+    ''' <summary>
+    ''' Open an existing .vsix package and return an instance of the VSIXPackage class
+    ''' with all the related information
+    ''' </summary>
+    ''' <param name="fileName"></param>
+    ''' <returns>VSIXPackage</returns>
+    Public Shared Function OpenVsix(fileName As String) As VSIXPackage
+        If Not File.Exists(fileName) Then
+            Throw New FileNotFoundException("File not found", fileName)
+        End If
+
+        Dim tempVsixFolder = GetTempFolder(Path.GetFileNameWithoutExtension(fileName))
+        ExtractVsix(fileName, tempVsixFolder, False)
+
+        Dim vsix As New VSIXPackage
+        Dim snipCollection = IO.Directory.EnumerateFiles(tempVsixFolder, "*.*snippet", SearchOption.AllDirectories)
+        If Not snipCollection.Any Then
+            Throw New InvalidOperationException("The specified .vsix package does not contain any code snippets.")
+        End If
+
+        For Each fileName In snipCollection
+            Dim snipInfo As New SnippetInfo
+            snipInfo.SnippetDescription = SnippetInfo.GetSnippetDescription(fileName)
+            snipInfo.SnippetFileName = IO.Path.GetFileName(fileName)
+            snipInfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(fileName)
+            snipInfo.SnippetPath = tempVsixFolder
+            vsix.CodeSnippets.Add(snipInfo)
+        Next
+
+        Dim manifest = XDocument.Load(Path.Combine(tempVsixFolder, "extension.vsixmanifest"))
+
+        vsix.PackageID = manifest...<Identity>.@Id
+        vsix.PackageAuthor = manifest...<Identity>.@Publisher
+        vsix.PackageVersion = manifest...<Identity>.@Version
+        vsix.ProductName = manifest...<DisplayName>.Value
+        vsix.PackageDescription = manifest...<Description>.Value
+        vsix.GettingStartedGuide = manifest...<GettingStartedGuide>.Value
+        vsix.IconPath = manifest...<Icon>.Value
+        vsix.PreviewImagePath = manifest...<PreviewImage>.Value
+        vsix.License = manifest...<License>.Value
+        vsix.Tags = manifest...<Tags>.Value
+        vsix.ReleaseNotes = manifest...<ReleaseNotes>.Value
+        Dim msi = manifest...<Installation>.@InstalledByMsi
+        If Not msi = "" Or String.IsNullOrEmpty(msi) = False Then
+            vsix.RequiresWindowsInstaller = CBool(msi)
+        End If
+        vsix.PkgDefName = IO.Path.GetFileName(manifest...<Asset>.@Path)
+
+        'Find GUID
+        Dim guids As MatchCollection = Regex.Matches(vsix.PackageID, "(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}")
+        vsix.PackageGuid = Guid.Parse(guids(0).Value)
+        Return vsix
     End Function
 
     ''' <summary>
@@ -399,6 +433,23 @@ Public Class VSIXPackage
     Private Function GetTempFolder() As String
 
         Dim tempFolder = Path.Combine(IO.Path.GetTempPath, "DSVSIX")
+        If IO.Directory.Exists(tempFolder) Then
+            IO.Directory.Delete(tempFolder, True)
+        End If
+        IO.Directory.CreateDirectory(tempFolder)
+
+        Return tempFolder
+    End Function
+
+    ''' <summary>
+    ''' Create a temporary folder to handle package-required files.
+    ''' If the folder already exists, it is first deleted
+    ''' </summary>
+    ''' <param name="tempFolderName">Append a subfolder with the specified name</param>
+    ''' <returns></returns>
+    Private Shared Function GetTempFolder(tempFolderName As String) As String
+
+        Dim tempFolder = Path.Combine(IO.Path.GetTempPath, tempFolderName)
         If IO.Directory.Exists(tempFolder) Then
             IO.Directory.Delete(tempFolder, True)
         End If
@@ -470,6 +521,8 @@ Public Class VSIXPackage
                                                <GettingStartedGuide><%= Me.GettingStartedGuide %></GettingStartedGuide>
                                                <Icon><%= IO.Path.GetFileName(Me.IconPath) %></Icon>
                                                <PreviewImage><%= IO.Path.GetFileName(Me.PreviewImagePath) %></PreviewImage>
+                                               <ReleaseNotes><%= Me.ReleaseNotes %></ReleaseNotes>
+                                               <Tags><%= Me.Tags %></Tags>
                                            </Metadata>
                                            <Installation>
                                                <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[12.0,14.0]"/>
@@ -692,6 +745,14 @@ Public Class VSIXPackage
         Me.ProductName = "My sample package"
         Me.PackageDescription = "Package description goes here"
         Me.SnippetFolderName = "My custom snippets"
+
+#Region "Package ID"
+        Dim noSpaces = Me.ProductName.Trim()
+        noSpaces = noSpaces.Replace(" ", "")
+        Me.PackageID = noSpaces & ".." & Me.PackageGuid.ToString
+        Me.PkgDefName = noSpaces & ".pkgdef"
+#End Region
+
     End Sub
 
 #Region "VSIX Signing"
