@@ -78,6 +78,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Snippet_ObjectModel\CodeSnippet.vb" />
+    <Compile Include="Snippet_ObjectModel\Declaration.vb" />
+    <Compile Include="Snippet_ObjectModel\Import.vb" />
+    <Compile Include="Snippet_ObjectModel\Reference.vb" />
     <Compile Include="Vsix_ObjectModel\FileAddedToPackageEventArgs.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -95,7 +98,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Snippet_ObjectModel\SnippetInfo.vb" />
-    <Compile Include="Snippet_ObjectModel\SnippetService.vb" />
     <Compile Include="Vsi_ObjectModel\VsiService.vb" />
     <Compile Include="Vsix_ObjectModel\VSIXPackage.vb" />
   </ItemGroup>

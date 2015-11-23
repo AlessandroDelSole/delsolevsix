@@ -11,10 +11,6 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DelSole_VSIX_Analysis.Test"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DelSole_VSIX_Analysis.Vsix", "DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\DelSole_VSIX_Analysis.Vsix.vbproj", "{4C34C286-1772-4976-BBB1-6ED038621AA9}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SampleApp", "SampleApp\SampleApp.vbproj", "{F417E53F-B026-4700-BCDF-92B97F7ECC40}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp_CS", "SampleApp_CS\SampleApp_CS.csproj", "{AEE2559E-A272-46EA-A52F-321584BA839E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,14 +33,6 @@ Global
 		{4C34C286-1772-4976-BBB1-6ED038621AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C34C286-1772-4976-BBB1-6ED038621AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C34C286-1772-4976-BBB1-6ED038621AA9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F417E53F-B026-4700-BCDF-92B97F7ECC40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F417E53F-B026-4700-BCDF-92B97F7ECC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F417E53F-B026-4700-BCDF-92B97F7ECC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F417E53F-B026-4700-BCDF-92B97F7ECC40}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AEE2559E-A272-46EA-A52F-321584BA839E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AEE2559E-A272-46EA-A52F-321584BA839E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AEE2559E-A272-46EA-A52F-321584BA839E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AEE2559E-A272-46EA-A52F-321584BA839E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
