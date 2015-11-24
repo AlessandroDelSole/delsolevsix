@@ -1,8 +1,14 @@
 
-
 #Understanding the VSIX format
-The VSIX (.vsix) file format is nothing but a .zip archive based on the Open XML conventions. A .vsix package must contain a .vsixmanifest XML file, which contains the package metadata and the list of files that must be packaged.
-Also, a .vsix must containg a package definition file (.pkgdef) that makes Visual Studio understand what kind of contents the package offers and where they must be installed. The library automatically creates a .vsixmanifest and .pkgdef file for you.
+The VSIX (.vsix) file format allows packaging multiple Visual Studio extensions into one installer. With .vsix packages, you can easily share VS packages, editor extensions, language services, tool windows, project/item templates and, of course, code snippet files.
+
+A .vsix file is nothing but a .zip archive based on the Open XML conventions. A .vsix package must contain:
+
+- a .vsixmanifest XML file, which contains the package metadata and the list of files that must be packaged.
+- a package definition file (.pkgdef) that makes Visual Studio understand what kind of contents the package offers and where they must be installed.
+- files that will be installed as Visual Studio extensions (typically .dll and .snippet files).
+
+The library helps generating .vsix packages for sharing and installing code snippets; it automatically creates a .vsixmanifest and .pkgdef file for you, and packages all the supplied code snippets into the final .vsix.
  
 #Representing code snippets
 Before you create a .vsix package, you need to represent each code snippet file you want to package into the .vsix in a .NET fashion. To accomplish this, you use the `DelSole.VSIX.SnippetInfo` class. 
@@ -54,11 +60,47 @@ Once you have populated the CodeSnippets property and once you have assigned the
             Vsix.Build("C:\\temp\\Sample.vsix");
  ```
  
-#Other Tools
-The DelSole.VSIX library also allows to digitally sign and extract a .vsix package,  to work with .vsi archives, and to generate code snippet files starting from source text:
+#Opening an existing .vsix package
+You can open an existing .vsix package and get an instance of the `VSIXPackage` class invoking the `OpenVsix` method and passing the .vsix file name as an argument. The operation succeeds if the .vsix package **only** contains code snippets. Following is an example:
 
-[Vsix Tools: signing and extracting .vsix packages](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/VsixTools.md)
+   ```csharp
+VSIXPackage vsix = VSIXPackage.OpenVsix("C:\\temp\\MyPackage.vsix");
+ ```
 
-[Vsi Tools: converting .vsi to .vsix and extracting .vsi packages](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/VsiTools.md)
+#Additional Tools
+The `DelSole.VSIX.VSIXPackage` class exposes other methods to interact with a .vsix package, such as `SignVsix` (to add a digital signature) and `ExtractVsix` (to extract the content of a package)
 
-[Generating code snippet files](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/SnippetTools.md)
+##Signing a .vsix package ##
+
+VSIX packages can be digitally signed with a X.509 certificate, through a password protected .pfx file. The `DelSole.VSIXPackage` class allows signing an existing .vsix package by invoking the `SignVsix` static method:
+
+```csharp
+    DelSole.VSIXPackage.SignVsix("inputPackage.vsix", "certFile.pfx", "password");
+```
+
+Where:
+`inputPackage.vsix` is the file name for the .vsix package to be signed
+`certFile.pfx` is the digital signature
+
+The method has two overloads: one that accepts an object of type `SecureString` as the password, and one that accepts a regular string as the password.
+
+##Extracting a .vsix package ##
+
+You can extract the whole content of a .vsix package or only the code snippet it contains invoking the `DelSole.VSIXPackage.ExtractVsix` static method:
+
+  ```csharp
+    DelSole.VSIXPackage.ExtractVsix("inputFile.vsix", "C:\targetFolder", true);
+ ```
+
+If the third argument is `true`, the operation will only extract code snippets (.snippet) contained in the .vsix package. If `false`, this operation will fully extract a .vsix package, including manifest and package definition.
+
+
+#Other resources
+See also:
+
+[Reference source for the VSIXPackage class](http://delsolevsixrefsource.azurewebsites.net/#DelSole.VSIX/Vsix_ObjectModel/VSIXPackage.vb)
+
+[Working with code snippet files](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/WorkingWithCodeSnippets.md)
+
+[Working with old-style .vsi archives](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/WorkingWithOldVsiArchives.md)
+
