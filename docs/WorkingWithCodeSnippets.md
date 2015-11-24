@@ -88,5 +88,13 @@ The code snippet schema reference states that Visual Basic code snippets can opt
             myCodeSnippet.References.Add(asm)
 ``` 
 
+### Loading a code snippet
+
+The `CodeSnippet` class exposes the static `LoadSnippet` method, which loads the content of a code snippet file and returns an instance of the `CodeSnippet` class. It only requires the file name as an argument:
+
+```csharp
+CodeSnippet mySnippet = CodeSnippet.LoadSnippet("C:\\Temp\\PrintMessage.snippet");
+```
+
 # Reference source
 Browse the code for the CodeSnippet class [online](http://delsolevsixrefsource.azurewebsites.net/#DelSole.VSIX/Snippet_ObjectModel/CodeSnippet.vb).
