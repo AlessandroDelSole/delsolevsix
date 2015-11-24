@@ -2,7 +2,7 @@
 
 In Visual Studio 2005, 2008, and 2010, you could package and share code snippets and other items via .vsi installers, based on the Visual Studio Community Content Installer engine. Since Visual Studio 2012 on, the .vsi format has been deprecated and developers have been encouraged to definitely use the .vsix file format, which enables installing Visual Studio extensions. Among the possible extensions you can install, code snippet files (.snippet) are definitely supported. But because you might have existing code snippets packaged into .vsi archives from the past, the DelSole.VSIX library makes it easier for you to migrate those archives to the .vsix format. 
 
-## The DelSole.VSIX.VsiTools namespace and the DelSole.VSIX.VsiTools.VsiService class
+## The `DelSole.VSIX.VsiTools` namespace and the `DelSole.VSIX.VsiTools.VsiService` class
 The `DelSole.VSIX.VsiTools` namespace exposes the `VsiService` class, which offers methods that help interacting with old-fashioned .vsi archives. More specifically, the class exposes the static `Vsi2Vsix` and `ExtractVsi` methods as detailed below.
 
 ## Converting a .vsi package to .vsix: The `Vsi2Vsix` method ##
