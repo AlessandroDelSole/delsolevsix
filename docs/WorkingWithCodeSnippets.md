@@ -51,7 +51,7 @@ The `DelSole.VSIX.SnippetTools.CodeSnippet` class represents a .snippet file com
 ```
 ### Saving a code snippet
 
-The CodeSnippet class exposes the static SaveSnippet method, which is very simple to use. It requires the target file name and the CodeSnippet instance as arguments:
+The `CodeSnippet` class exposes the static `SaveSnippet` method, which is very simple to use. It requires the target file name and the `CodeSnippet` instance as arguments:
 
 ```csharp
 CodeSnippet.SaveSnippet("C:\\Temp\\PrintMessage.snippet", myCodeSnippet);
@@ -59,7 +59,7 @@ CodeSnippet.SaveSnippet("C:\\Temp\\PrintMessage.snippet", myCodeSnippet);
 
 ### Error validation
 
-The CodeSnippet class implements the IDataErrorInfo interface which helps for data validation. For instance, you can check the HasErrors property before saving the snippet as follows:
+The `CodeSnippet` class implements the `IDataErrorInfo` interface which helps for data validation. For instance, you can check the `HasErrors` property before saving the snippet as follows:
 
   ```csharp
             if (myCodeSnippet.HasErrors==true)
@@ -73,9 +73,9 @@ The CodeSnippet class implements the IDataErrorInfo interface which helps for da
             }
 ```
 
- ## Visual Basic only: namespaces and assembly references
+## Visual Basic only: namespaces and assembly references
  
- The code snippet schema reference states that Visual Basic code snippets can optionally include a list of namespaces and assembly references that are required for the snippet to work. Here's an example:
+The code snippet schema reference states that Visual Basic code snippets can optionally include a list of namespaces and assembly references that are required for the snippet to work. Here's an example:
  
    ```vb
             Dim ns As New Import
