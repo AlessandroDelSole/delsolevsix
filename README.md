@@ -7,3 +7,6 @@ The library is available for Visual Studio 2015 and can be [downloaded from NuGe
 [Documentation](https://github.com/AlessandroDelSole/delsolevsix/tree/master/docs)
 
 [Browse the reference source online](http://delsolevsixrefsource.azurewebsites.net/)
+
+##Applications
+Check out [Code Snippet Studio](https://github.com/AlessandroDelSole/CodeSnippetStudio), an open source application that fully uses the DelSole.VSIX library to produce and share code snippets with .vsix packages.
