@@ -12,6 +12,7 @@ Namespace SnippetTools
         Implements INotifyPropertyChanged
         Implements IDataErrorInfo
 
+#Region "Backing fields"
         Private _author As String
         Private _title As String
         Private _description As String
@@ -24,7 +25,9 @@ Namespace SnippetTools
         Private _declarations As Declarations
         Private _code As String
         Private _language As String
+#End Region
 
+#Region "Properties"
         ''' <summary>
         ''' The code snippet author
         ''' </summary>
@@ -229,7 +232,9 @@ Namespace SnippetTools
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Language)))
             End Set
         End Property
+#End Region
 
+#Region "Data validation support"
         ''' <summary>
         ''' Holds a collection of validation errors
         ''' </summary>
@@ -333,6 +338,7 @@ Namespace SnippetTools
                     End If
             End Select
         End Sub
+#End Region
 
         ''' <summary>
         ''' An array representing the supported programming languages
@@ -356,6 +362,7 @@ Namespace SnippetTools
             Declarations = New Declarations
         End Sub
 
+#Region "Load and save snippets"
         ''' <summary>
         ''' Return a schema-compliant string representing the code snippet kind
         ''' </summary>
@@ -410,7 +417,7 @@ Namespace SnippetTools
                                       <SnippetType>Expansion</SnippetType>
                                   </SnippetTypes>
                                   <Keywords>
-                                      <%= From key In snippetData.Keywords
+                                      <%= From key In keywords
                                           Select <Keyword><%= key %></Keyword> %>
                                   </Keywords>
                                   <Shortcut><%= snippetData.Shortcut %></Shortcut>
@@ -537,8 +544,8 @@ Namespace SnippetTools
             End If
 
             Select Case doc...<Code>.@Kind.ToLower
-                Case = "any"
-                    snippet.Kind = CodeSnippetKinds.Any
+                Case = "file"
+                    snippet.Kind = CodeSnippetKinds.File
                 Case = "method body"
                     snippet.Kind = CodeSnippetKinds.MethodBody
                 Case = "method decl"
@@ -572,4 +579,5 @@ Namespace SnippetTools
         File
         Any
     End Enum
+#End Region
 End Namespace

@@ -45,8 +45,8 @@ Namespace VsiTools
 
             'In a .vsi, EULA is a zip comment. So, has it comments/EULA?
             If oldVsi.Comment <> "" Or String.IsNullOrWhiteSpace(oldVsi.Comment) = False Then
-                My.Computer.FileSystem.WriteAllText(tempFolder & "\EULA.txt", oldVsi.Comment, False)
-                newVsixPackage.License = tempFolder & "\EULA.txt"
+                My.Computer.FileSystem.WriteAllText(Path.Combine(tempFolder, "EULA.txt"), oldVsi.Comment, False)
+                newVsixPackage.License = Path.Combine(tempFolder, "EULA.txt")
             End If
 
             'Iterate the list of extracted snippets from
@@ -69,6 +69,8 @@ Namespace VsiTools
             'Populate package metadata
             If packageAuthor <> "" Or String.IsNullOrEmpty(packageAuthor) = False Then
                 newVsixPackage.PackageAuthor = packageAuthor
+            Else
+                newVsixPackage.PackageAuthor = defaultValue
             End If
 
             If packageName <> "" Or String.IsNullOrEmpty(packageName) = False Then
@@ -104,6 +106,112 @@ Namespace VsiTools
             'Generate a new Vsix package
             newVsixPackage.Build(vsixFileName)
         End Sub
+
+        ''' <summary>
+        ''' Convert an obsolete VSI package into a VSIX package. The source VSI package must contain only code snippets
+        ''' </summary>
+        ''' <param name="vsiFileName">File name of the source .vsi archive</param>
+        ''' <param name="vsixFileName">File name of the destination .vsix package</param>
+        ''' <param name="package">An instance of <seealso cref="VSIXPackage"/> with metadata already populated</param>
+        Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String, package As VSIXPackage)
+            If Not IO.File.Exists(vsiFileName) Then
+                Throw New ArgumentException("File not found", NameOf(vsiFileName))
+            End If
+
+            'Get a temporary folder
+            Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
+
+            'Extract the old vsi package into a temp folder
+            Dim oldVsi As New Ionic.Zip.ZipFile(vsiFileName)
+            oldVsi.ExtractAll(tempFolder, ExtractExistingFileAction.OverwriteSilently)
+
+            'Are there any snippets?
+            Dim snippets = IO.Directory.EnumerateFiles(tempFolder, "*.*snippet")
+
+            'If not, throw
+            If snippets.Any = False Then
+                Throw New InvalidOperationException("The specified .vsi package does not contain any code snippets")
+            End If
+
+            'In a .vsi, EULA is a zip comment. So, has it comments/EULA?
+            If oldVsi.Comment <> "" Or String.IsNullOrWhiteSpace(oldVsi.Comment) = False Then
+                My.Computer.FileSystem.WriteAllText(Path.Combine(tempFolder, "EULA.txt"), oldVsi.Comment, False)
+                package.License = Path.Combine(tempFolder, "EULA.txt")
+            End If
+
+            'Iterate the list of extracted snippets from
+            'the old Vsi and populate a SnippetInfo collection
+            For Each oldSnip In snippets
+                'Add the proper utf-8 encoding to the snippet file
+                FixSnippetTerminatorAndEncoding(oldSnip)
+
+                'Generate a new SnippetInfo object per snippet
+                Dim snipInfo As New SnippetInfo
+                snipInfo.SnippetDescription = SnippetInfo.GetSnippetDescription(oldSnip)
+                snipInfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(oldSnip)
+                snipInfo.SnippetPath = IO.Path.GetDirectoryName(oldSnip)
+                snipInfo.SnippetFileName = IO.Path.GetFileName(oldSnip)
+                package.CodeSnippets.Add(snipInfo)
+            Next
+
+            'Generate a new Vsix package
+            package.Build(vsixFileName)
+        End Sub
+
+        Public Shared Function Vsi2Vsix(vsiFileName As String) As VSIXPackage
+            If Not IO.File.Exists(vsiFileName) Then
+                Throw New ArgumentException("File not found", NameOf(vsiFileName))
+            End If
+
+            'Get a temporary folder
+            Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
+
+            'Extract the old vsi package into a temp folder
+            Dim oldVsi As New Ionic.Zip.ZipFile(vsiFileName)
+            oldVsi.ExtractAll(tempFolder, ExtractExistingFileAction.OverwriteSilently)
+
+            'Are there any snippets?
+            Dim snippets = IO.Directory.EnumerateFiles(tempFolder, "*.*snippet")
+
+            'If not, throw
+            If snippets.Any = False Then
+                Throw New InvalidOperationException("The specified .vsi package does not contain any code snippets")
+            End If
+
+            Dim newVsixPackage As New VSIXPackage
+
+            'In a .vsi, EULA is a zip comment. So, has it comments/EULA?
+            If oldVsi.Comment <> "" Or String.IsNullOrWhiteSpace(oldVsi.Comment) = False Then
+                My.Computer.FileSystem.WriteAllText(Path.Combine(tempFolder, "EULA.txt"), oldVsi.Comment, False)
+                newVsixPackage.License = Path.Combine(tempFolder, "EULA.txt")
+            End If
+
+            'Iterate the list of extracted snippets from
+            'the old Vsi and populate a SnippetInfo collection
+            For Each oldSnip In snippets
+                'Add the proper utf-8 encoding to the snippet file
+                FixSnippetTerminatorAndEncoding(oldSnip)
+
+                'Generate a new SnippetInfo object per snippet
+                Dim snipInfo As New SnippetInfo
+                snipInfo.SnippetDescription = SnippetInfo.GetSnippetDescription(oldSnip)
+                snipInfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(oldSnip)
+                snipInfo.SnippetPath = IO.Path.GetDirectoryName(oldSnip)
+                snipInfo.SnippetFileName = IO.Path.GetFileName(oldSnip)
+                newVsixPackage.CodeSnippets.Add(snipInfo)
+            Next
+
+            Dim defaultValue = IO.Path.GetFileNameWithoutExtension(vsiFileName)
+
+            'Populate package metadata with a default value
+            newVsixPackage.PackageAuthor = defaultValue
+            newVsixPackage.ProductName = defaultValue
+            newVsixPackage.PackageDescription = defaultValue
+            newVsixPackage.SnippetFolderName = defaultValue
+
+            'Generate a new Vsix package
+            Return newVsixPackage
+        End Function
 
         ''' <summary>
         ''' Fix very old .snippet files that might miss the utf-8 encoding specification

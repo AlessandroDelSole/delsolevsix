@@ -72,7 +72,7 @@ Public Class VSIXPackage
     Dim snippetFolder As String
 #End Region
 
-#Region "User-provided properties"
+#Region "Properties"
     ''' <summary>
     ''' The name of the VSIX package. 
     ''' </summary>
@@ -293,14 +293,20 @@ Public Class VSIXPackage
         End Set
     End Property
 
-#End Region
-
-#Region "Properties"
     ''' <summary>
     ''' Get a unique identifier for the VSIX package
     ''' </summary>
     ''' <returns>Guid</returns>
     Public Property PackageGuid As Guid
+        Get
+            Return _packageGuid
+        End Get
+        Set(value As Guid)
+            _packageGuid = value
+            OnPropertyChanged(NameOf(PackageGuid))
+        End Set
+    End Property
+
     ''' <summary>
     ''' Return the list of dependencies for the VSIX package
     ''' </summary>
@@ -322,12 +328,28 @@ Public Class VSIXPackage
     ''' </summary>
     ''' <returns>String</returns>
     Public Property PackageID As String
+        Get
+            Return _packageID
+        End Get
+        Set(value As String)
+            _packageID = value
+            OnPropertyChanged(NameOf(PackageID))
+        End Set
+    End Property
 
     ''' <summary>
     ''' Return the package definition file name (.pkgdef)
     ''' </summary>
     ''' <returns></returns>
     Private Property PkgDefName As String
+        Get
+            Return _pkgDefName
+        End Get
+        Set(value As String)
+            _pkgDefName = value
+            OnPropertyChanged(NameOf(PkgDefName))
+        End Set
+    End Property
 #End Region
 
 #Region "VSIX Generation"
@@ -637,6 +659,9 @@ Public Class VSIXPackage
     ''' Holds a collection of validation errors
     ''' </summary>
     Private validationErrors As New Dictionary(Of String, String)
+    Private _packageID As String
+    Private _pkgDefName As String
+    Private _packageGuid As Guid
 
     ''' <summary>
     ''' Add a validation error to the collection of validation errors
