@@ -343,7 +343,7 @@ Namespace SnippetTools
         ''' <summary>
         ''' An array representing the supported programming languages
         ''' </summary>
-        Private supportedLanguages() As String = {"VB", "CSHARP", "SQL", "XML", "CPP", "HTML", "JAVASCRIPT"}
+        Private supportedLanguages() As String = {"VB", "CSHARP", "SQL", "XML", "XAML", "CPP", "HTML", "JAVASCRIPT"}
 
         ''' <summary>
         ''' Raised when the value of a property changes.
@@ -392,6 +392,10 @@ Namespace SnippetTools
         ''' <param name="fileName">The target snippet file name</param>
         ''' <param name="snippetData">The instance of <seealso cref="CodeSnippet"/> </param>
         Public Shared Sub SaveSnippet(fileName As String, snippetData As CodeSnippet)
+            If snippetData.HasErrors Then
+                Throw New InvalidOperationException("The supplied instance of CodeSnippet contains errors that must be fixed before saving.")
+            End If
+
             Dim snippetKind As String = ReturnSnippetKind(snippetData.Kind)
 
             Dim editedCode = snippetData.Code
