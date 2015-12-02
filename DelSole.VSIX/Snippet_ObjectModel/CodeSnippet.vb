@@ -1,6 +1,8 @@
 ﻿Option Strict On
 Imports System.Collections.ObjectModel
 Imports System.ComponentModel
+Imports System.IO
+Imports Newtonsoft.Json
 Imports <xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 
 Namespace SnippetTools
@@ -391,11 +393,7 @@ Namespace SnippetTools
         ''' </summary>
         ''' <param name="fileName">The target snippet file name</param>
         ''' <param name="snippetData">The instance of <seealso cref="CodeSnippet"/> </param>
-        Public Shared Sub SaveSnippet(fileName As String, snippetData As CodeSnippet)
-            If snippetData.HasErrors Then
-                Throw New InvalidOperationException("The supplied instance of CodeSnippet contains errors that must be fixed before saving.")
-            End If
-
+        Private Shared Sub SaveVisualStudioSnippet(fileName As String, snippetData As CodeSnippet)
             Dim snippetKind As String = ReturnSnippetKind(snippetData.Kind)
 
             Dim editedCode = snippetData.Code
@@ -519,21 +517,21 @@ Namespace SnippetTools
 
             Dim litQuery = From decl In doc...<Literal>
                            Select New Declaration With {.ID = decl.<ID>.Value,
-                                         .Default = decl.<Default>.Value,
-                                         .Editable = True,
-                                         .Function = decl.<Function>.Value,
-                                         .ToolTip = decl.<ToolTip>.Value,
-                                         .Type = decl.<Type>.Value,
-                                         .ReplacementType = "Literal"}
+.Default = decl.<Default>.Value,
+.Editable = True,
+.Function = decl.<Function>.Value,
+.ToolTip = decl.<ToolTip>.Value,
+.Type = decl.<Type>.Value,
+.ReplacementType = "Literal"}
 
             Dim objQuery = From decl In doc...<Object>
                            Select New Declaration With {.ID = decl.<ID>.Value,
-                          .Default = decl.<Default>.Value,
-                          .Editable = True,
-                          .Function = decl.<Function>.Value,
-                          .ToolTip = decl.<ToolTip>.Value,
-                          .Type = decl.<Type>.Value,
-                          .ReplacementType = "Object"}
+.Default = decl.<Default>.Value,
+.Editable = True,
+.Function = decl.<Function>.Value,
+.ToolTip = decl.<ToolTip>.Value,
+.Type = decl.<Type>.Value,
+.ReplacementType = "Object"}
 
             If litQuery.Any Then
                 For Each lit In litQuery
@@ -568,6 +566,65 @@ Namespace SnippetTools
             snippet.Code = code
             Return snippet
         End Function
+
+        ''' <summary>
+        ''' Save a code snippet for Visual Studio Code
+        ''' </summary>
+        ''' <param name="fileName"></param>
+        ''' <param name="snippetData"></param>
+        Private Shared Sub SaveVSCodeSnippet(fileName As String, snippetData As CodeSnippet)
+            Dim editedCode = snippetData.Code
+
+            If snippetData.Declarations.Any Then
+                For Each decl In snippetData.Declarations
+                    editedCode = editedCode.Replace(decl.Default, "${" & decl.ID & "}")
+                Next
+            End If
+
+            Dim TextLines() As String = editedCode.Split(Environment.NewLine.ToCharArray)
+
+            Using str As New StringWriter
+                Using jw As New JsonTextWriter(str)
+                    jw.Formatting = Formatting.Indented
+                    jw.WriteStartObject()
+                    jw.WritePropertyName(snippetData.Title)
+                    jw.WriteStartObject()
+                    jw.WritePropertyName("prefix")
+                    jw.WriteValue(snippetData.Shortcut)
+                    jw.WritePropertyName("body")
+                    jw.WriteStartArray()
+                    For Each line As String In TextLines
+                        jw.WriteValue(line)
+                    Next
+                    jw.WriteEndArray()
+                    jw.WritePropertyName("description")
+                    jw.WriteValue(snippetData.Description)
+                    jw.WriteEndObject()
+                    jw.WriteEndObject()
+                End Using
+                Dim resultingString = str.GetStringBuilder.ToString()
+                My.Computer.FileSystem.WriteAllText(fileName, resultingString, False)
+            End Using
+        End Sub
+
+        ''' <summary>
+        ''' Create and save a code snippet file to disk
+        ''' </summary>
+        ''' <param name="fileName">The target snippet file name</param>
+        ''' <param name="snippetData">The instance of <seealso cref="CodeSnippet"/> </param>
+        ''' <param name="ideType">A value from <seealso cref="IDEType"/> that determines if the snippet must target Visual Studio or Code</param>
+        Public Shared Sub SaveSnippet(fileName As String, snippetData As CodeSnippet, ideType As IDEType)
+            If snippetData.HasErrors Then
+                Throw New InvalidOperationException("The supplied instance of CodeSnippet has errors that must be fixed first.")
+            End If
+
+            If ideType = IDEType.VisualStudio Then
+                SaveVisualStudioSnippet(fileName, snippetData)
+            Else
+                SaveVSCodeSnippet(fileName, snippetData)
+            End If
+        End Sub
+
     End Class
 
     ''' <summary>
@@ -582,6 +639,11 @@ Namespace SnippetTools
         TypeDeclaration
         File
         Any
+    End Enum
+
+    Public Enum IDEType
+        VisualStudio
+        Code
     End Enum
 #End Region
 End Namespace
