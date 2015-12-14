@@ -44,6 +44,7 @@ Namespace SnippetTools
             Set(value As String)
                 _author = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Author)))
+                CheckValue(NameOf(Author))
             End Set
         End Property
 
@@ -61,6 +62,7 @@ Namespace SnippetTools
             Set(value As String)
                 _title = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Title)))
+                CheckValue(NameOf(Title))
             End Set
         End Property
 
@@ -214,6 +216,7 @@ Namespace SnippetTools
             Set(value As String)
                 _code = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Code)))
+                CheckValue(NameOf(Code))
             End Set
         End Property
 
@@ -232,6 +235,7 @@ Namespace SnippetTools
             Set(value As String)
                 _language = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Language)))
+                CheckValue(NameOf(Language))
             End Set
         End Property
 #End Region

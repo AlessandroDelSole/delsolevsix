@@ -11,11 +11,12 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>The Del Sole's VSIX library helps generating VSIX packages that contain reusable code snippet files for Visual Studio. We provide integrated Roslyn code analysis for live issue detection as you type</description>
-    <releaseNotes>Fixed bugs in handling snippet keywords and introduced an overload of VsiService.Vsi2Vsix which returns an in-memory VSIXPackage.</releaseNotes>
+    <releaseNotes>Fixed a bug about a code snippet's data validation.</releaseNotes>
     <copyright>Copyright (C), 2015 Alessandro Del Sole</copyright>
     <tags>vsix, snippet, roslyn, analyzers, extensibility</tags>
     <dependencies>
       <dependency id="DotNetZip" version="1.9.6" />
+      <dependency id="Newtonsoft.Json" version="7.0.1" />
     </dependencies>
   </metadata>
   <!-- The convention for analyzers is to put language agnostic dlls in analyzers\dotnet and language specific analyzers in either analyzers\dotnet\cs or analyzers\dotnet\vb -->
