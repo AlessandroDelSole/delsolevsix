@@ -81,6 +81,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Snippet_Libraries\SnippetFolder.vb" />
+    <Compile Include="Snippet_Libraries\SnippetLibrary.vb" />
     <Compile Include="Snippet_ObjectModel\CodeSnippet.vb" />
     <Compile Include="Snippet_ObjectModel\Declaration.vb" />
     <Compile Include="Snippet_ObjectModel\Import.vb" />
