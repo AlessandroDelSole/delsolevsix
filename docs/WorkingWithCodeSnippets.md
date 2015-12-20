@@ -19,7 +19,7 @@ Visual Studio Code is a free, advanced code editor with syntax highlighting, Int
 
 You can write and share your own code snippets, and plug them into the Code's editor. To accomplish this, you first create a .json file based on the [proper JSON format](https://code.visualstudio.com/docs/customization/userdefinedsnippets). Once you have created one or more .json files, you can package your code snippets into a .vsix archive, which provides an automated way of installing, among the others, reusable code snippets. Actually, this is not the only way to share code snippets for Visual Studio Code because the way Code manages code snippets is very different from Visual Studio. More about these differences is discussed in the [Packaging snippets for Visual Studio Code](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/PackagingSnippetsForCode.md) document. 
 
-The DelSole.VSIX library provides APIs that make it easy to create .json files. At this time, you can package only one snippet into a .vsix archive. 
+The DelSole.VSIX library provides APIs that make it easy to create .json files. At this time, you can package only one .json file into a .vsix archive but remember that a .json file can contain multiple snippets. 
 
 ## The `DelSole.VSIX.SnippetTools` namespace
 
@@ -34,9 +34,9 @@ A code snippet is essentially made of the following elements:
 The DelSole.VSIX library expose the `DelSole.VSIX.SnippetTools` namespaces, which offers the following types:
 
 - `CodeSnippet` class, which represents a code snippet with its properties and allows saving a code snippet based on the proper XML schema by invoking the SaveSnippet method
-- `CodeSnippetKinds` enumeration, which represents the kind of code snippet (method body, method declaration, type declaration, file, any)
-- `Import` class and `Imports` collection, which represent one or more Imports directives. 
-- `Reference` class and `References` collection, which represent one or more assembly references. 
+- `CodeSnippetKinds` enumeration, which represents the kind of code snippet (method body, method declaration, type declaration, file, any). Not used with Visual Studio Code.
+- `Import` class and `Imports` collection, which represent one or more Imports directives. Not used with Visual Studio Code.
+- `Reference` class and `References` collection, which represent one or more assembly references. Not used with Visual Studio Code.
 - `Declaration` class and `Declarations` collection, which represent one or more declarations.
 
 ## The `CodeSnippet` class
@@ -60,6 +60,9 @@ The `DelSole.VSIX.SnippetTools.CodeSnippet` class represents a .snippet file com
 
             myCodeSnippet.Declarations.Add(decl);
 ```
+
+You use the class in the same way if you want to create a snippet for Visual Studio Code. However, the `Kind`, `Namespaces`, and `References` properties will be ignored so you can avoid populating them. 
+
 ### Saving a code snippet
 
 The `CodeSnippet` class exposes the static `SaveSnippet` method, which is very simple to use. It requires the target file name, the `CodeSnippet` instance, and a value from the `IDEType` enumeration as arguments. The latter is used to determine if the target file format must be a .snippet (Visual Studio 2015) or .json (Visual Studio Code) file.
