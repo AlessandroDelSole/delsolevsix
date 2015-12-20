@@ -2,7 +2,7 @@
 
 There is a number of different ways to provide custom code snippets for Visual Studio Code, all discussed in the [Extensibility Reference page](https://code.visualstudio.com/docs/customization/userdefinedsnippets). 
 
-The DelSole.VSIX library supports generating a .vsix package that contains (at this time) one .json code snippet. There are some requirements to accomplish this, described through this document. Please pay particular attention to the described requirements. 
+The DelSole.VSIX library supports generating a .vsix package that contains (at this time) one .json file, but remember that one .json file can contain multiple snippets. There are some requirements to accomplish this, described through this document. Please pay particular attention to the described requirements. 
 
 #Understanding the VSIX format
 The VSIX (.vsix) file format allows packaging multiple Visual Studio extensions into one installer. With .vsix packages, you can easily share VS packages, editor extensions, language services, tool windows, project/item templates and, of course, code snippet files.
@@ -13,7 +13,7 @@ A .vsix file is nothing but a .zip archive based on the Open XML conventions. A 
 - a package definition file (.pkgdef) that makes Visual Studio understand what kind of contents the package offers and where they must be installed.
 - files that will be installed as Visual Studio extensions (typically .dll and .snippet files).
 
-Microsoft is currently working on extending .vsix packages to support Visual Studio Code. So, the DelSole.VSIX library allows generating a .vsix package that can install one .json code snippet. Hopefully, this limitation will be removed in future versions. 
+Microsoft is currently working on extending .vsix packages to support Visual Studio Code. So, the DelSole.VSIX library allows generating a .vsix package that can install one .json file. Hopefully, this limitation will be removed in future versions. 
 
 #Software requirements
 In order to generate .vsix packages for Visual Studio Code, the DelSole.VSIX library requires you have installed [Node.js](https://nodejs.org) on your machine. Once you have Node.js, you need to install the **vsce** command line tool. Please refer to the [vsce Publishing Tool](https://code.visualstudio.com/docs/tools/vscecli) page for instructions.
