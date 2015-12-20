@@ -650,6 +650,10 @@ Public Class VSIXPackage
             Throw New InvalidOperationException("The CodeSnippets property contains 0 snippets")
         End If
 
+        If Not IO.Path.GetExtension(Me.CodeSnippets.FirstOrDefault.SnippetFileName).ToLowerInvariant = ".json" Then
+            Throw New InvalidOperationException("The first code snippet in the list is not a .json file")
+        End If
+
         RaiseEvent VsixGenerationStarted()
 
         Dim workingFolder = IO.Directory.GetParent(pathOfJsonSnippets)
@@ -960,7 +964,7 @@ Public Class VSIXPackage
                 jw.WritePropertyName("language")
                 jw.WriteValue(Me.CodeSnippets.FirstOrDefault.SnippetLanguage)
                 jw.WritePropertyName("path")
-                jw.WriteValue("./snippets/markdown.json")
+                jw.WriteValue($"./snippets/{Me.CodeSnippets.FirstOrDefault.SnippetFileName}")
                 jw.WriteEndArray()
                 jw.WriteEndObject()
                 jw.WriteEndObject()
