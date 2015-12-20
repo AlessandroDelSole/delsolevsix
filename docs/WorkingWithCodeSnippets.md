@@ -1,7 +1,7 @@
 # Working with code snippets
 The DelSole.VSIX library makes it easy to generate reusable code snippets for both Visual Studio 2015 and Visual Studio Code. These two IDEs use different code snippet formats: Visual Studio relies on XML code snippets, whereas Code relies on JSON code snippets. This document describes how to create code snippets for both environments. 
 
-# Code snippets for Visual Studio (.snippet)
+# Code snippets for Visual Studio 2015 (.snippet)
 
 Microsoft Visual Studio (2005 and higher) supports IntelliSense code snippets. These are small pieces of reusable code that you can insert in your code while typing.
 To insert a snippet, right-click in the code editor and then select **Insert Snippet**. A popup allows you to pickup from a built-in set of code snippets, which can be categorized and organized within folders.
@@ -21,7 +21,7 @@ You can write and share your own code snippets, and plug them into the Code's ed
 
 The DelSole.VSIX library provides APIs that make it easy to create .json files. At this time, you can package only one snippet into a .vsix archive. 
 
-## The DelSole.VSIX.SnippetTools namespace
+## The `DelSole.VSIX.SnippetTools` namespace
 
 A code snippet is essentially made of the following elements:
 
@@ -39,7 +39,7 @@ The DelSole.VSIX library expose the `DelSole.VSIX.SnippetTools` namespaces, whic
 - `Reference` class and `References` collection, which represent one or more assembly references. 
 - `Declaration` class and `Declarations` collection, which represent one or more declarations.
 
-## The CodeSnippet class
+## The `CodeSnippet` class
 
 The `DelSole.VSIX.SnippetTools.CodeSnippet` class represents a .snippet file compliant with the [Code Snippet Schema Reference](https://msdn.microsoft.com/en-us/library/ms171418.aspx). The following code demonstrates how to create a code snippet:
 
