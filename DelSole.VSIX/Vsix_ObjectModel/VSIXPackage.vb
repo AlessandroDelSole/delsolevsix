@@ -4,6 +4,7 @@ Imports <xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
 Imports System.IO.Compression
 Imports Ionic.Zip
 Imports System.Text.RegularExpressions
+Imports Newtonsoft.Json
 
 ''' <summary>
 ''' Represent a VSIX package with its contents and metadata,
@@ -535,11 +536,10 @@ Public Class VSIXPackage
 
     ''' <summary>
     ''' Generate the VSIX Manifest (extension.vsixmanifest file)
-    ''' Invoked internally by the <seealso cref="Build(String)"/> method
+    ''' Invoked internally by the <seealso cref="Build(String, SnippetTools.IDEType)"/> method
     ''' </summary>
     ''' <param name="targetFolder"></param>
     Private Sub GenerateVsixManifest(targetFolder As String)
-
         Dim VsixManifest As XElement = <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
                                            <Metadata>
                                                <Identity Id=<%= Me.PackageID %> Version="1.0" Language="en-US" Publisher=<%= Me.PackageAuthor %>/>
@@ -581,10 +581,10 @@ Public Class VSIXPackage
     End Sub
 
     ''' <summary>
-    ''' Build a VSIX package that contains the code snippets hold by the CodeSnippets property. Properties representing the package manifest must be populated before invoking this method.
+    ''' Generate a .vsix package for Visual Studio 2015
     ''' </summary>
     ''' <param name="fileName"></param>
-    Public Sub Build(fileName As String)
+    Private Sub BuildClassicVsix(fileName As String)
         If HasErrors Then
             Dim errorMessage = "Cannot build the VSIX package. The current instance of the VSIXPackage class has errors that must be fixed."
             Throw New InvalidOperationException(errorMessage)
@@ -630,6 +630,53 @@ Public Class VSIXPackage
         'Zip the package into VSIX
         Me.Zip(fileName, tempFolder)
         RaiseEvent VsixGenerationCompleted()
+    End Sub
+
+    ''' <summary>
+    ''' Generate a .vsix package that targets Visual Studio Code
+    ''' </summary>
+    ''' <param name="pathOfJsonSnippets"></param>
+    Private Sub BuildVsCodeVsix(pathOfJsonSnippets As String)
+        If Not IsVsceInstalled() Then
+            Throw New FileNotFoundException("The required vsce.cmd tool has not been found. Make sure you have installed Node.js")
+        End If
+
+        If HasErrors Then
+            Dim errorMessage = "Cannot build the VSIX package. The current instance of the VSIXPackage class has errors that must be fixed."
+            Throw New InvalidOperationException(errorMessage)
+        End If
+
+        If Not Me.CodeSnippets.Any Then
+            Throw New InvalidOperationException("The CodeSnippets property contains 0 snippets")
+        End If
+
+        RaiseEvent VsixGenerationStarted()
+
+        Dim workingFolder = IO.Directory.GetParent(pathOfJsonSnippets)
+
+        GeneratePackageDotJson(workingFolder.FullName)
+
+        Dim currentDir = IO.Directory.GetCurrentDirectory
+        IO.Directory.SetCurrentDirectory(workingFolder.FullName)
+        Process.Start("vsce.cmd", "package")
+        RaiseEvent VsixGenerationCompleted()
+        IO.Directory.SetCurrentDirectory(currentDir)
+    End Sub
+
+    ''' <summary>
+    ''' Build a VSIX package that contains the code snippets hold by the <seealso cref="CodeSnippets"/> property. Properties representing the package manifest must be populated before invoking this method.
+    ''' </summary>
+    ''' <param name="name">Represents the target .vsix file name if targetIDE is VisualStudio or the folder name that contains .json snippets if targetIDE is Code</param>
+    ''' <param name="targetIDE">The target IDE for the .vsix package (Visual Studio 2015 or Visual Studio Code)</param>
+    Public Sub Build(name As String, targetIDE As SnippetTools.IDEType)
+        If Not Me.CodeSnippets.Any Then
+            Throw New InvalidOperationException("There are no code snippets in the package")
+        End If
+        If targetIDE = SnippetTools.IDEType.VisualStudio Then
+            BuildClassicVsix(name)
+        Else
+            BuildVsCodeVsix(name)
+        End If
     End Sub
 
     ''' <summary>
@@ -863,6 +910,61 @@ Public Class VSIXPackage
             If Not ValidateSignatures(sourcePackage) Then
                 Throw New System.Security.Cryptography.CryptographicException("The digital signature is invalid.", "Invalid Signature")
             End If
+        End Using
+    End Sub
+#End Region
+
+#Region "Visual Studio Code support"
+    Private Function IsVsceInstalled() As Boolean
+        Dim specialFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+        Dim npmPath = IO.Path.Combine(specialFolder, "npm")
+        If IO.Directory.Exists(npmPath) = False Then Return False
+
+        If IO.File.Exists(IO.Path.Combine(npmPath, "vsce.cmd")) = False Then
+            Return False
+        Else
+            Return True
+        End If
+    End Function
+
+    Private Sub GeneratePackageDotJson(targetFolder As String)
+        If Me.HasErrors Then
+            Throw New InvalidOperationException("The current instance of VSIXPackage contains errors that must be fixed first.")
+        End If
+        Using str As New StreamWriter(IO.Path.Combine(targetFolder, "package.json"))
+            Using jw As New JsonTextWriter(str)
+                jw.Formatting = Formatting.Indented
+                jw.WriteStartObject()
+                jw.WritePropertyName("name")
+                jw.WriteValue(Me.ProductName)
+                jw.WritePropertyName("publisher")
+                jw.WriteValue(Me.PackageAuthor)
+                jw.WritePropertyName("description")
+                jw.WriteValue(Me.PackageDescription)
+                jw.WritePropertyName("version")
+                jw.WriteValue(Me.PackageVersion)
+                jw.WritePropertyName("engines")
+                jw.WriteStartObject()
+                jw.WritePropertyName("vscode")
+                jw.WriteValue("0.10.5")
+                jw.WriteEndObject()
+                jw.WritePropertyName("categories")
+                jw.WriteStartArray()
+                jw.WriteValue("Snippets")
+                jw.WriteEndArray()
+                jw.WritePropertyName("contributes")
+                jw.WriteStartObject()
+                jw.WritePropertyName("snippets")
+                jw.WriteStartArray()
+                jw.WriteStartObject()
+                jw.WritePropertyName("language")
+                jw.WriteValue(Me.CodeSnippets.FirstOrDefault.SnippetLanguage)
+                jw.WritePropertyName("path")
+                jw.WriteValue("./snippets/markdown.json")
+                jw.WriteEndArray()
+                jw.WriteEndObject()
+                jw.WriteEndObject()
+            End Using
         End Using
     End Sub
 #End Region

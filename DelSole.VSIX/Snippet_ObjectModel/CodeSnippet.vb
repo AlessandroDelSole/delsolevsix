@@ -337,7 +337,7 @@ Namespace SnippetTools
                 Case Is = "Language"
                     If Me.Language = "" Or String.IsNullOrEmpty(Me.Language) Then
                         Me.AddError("Language", "Value cannot be null")
-                    ElseIf supportedLanguages.Contains(Language.ToUpper) = False
+                    ElseIf supportedLanguages.Contains(Language.ToUpper) = False Then
                         Me.AddError("Language", $"{Language} language is not supported")
                     Else
                         Me.RemoveError("Language")

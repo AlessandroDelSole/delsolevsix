@@ -104,7 +104,7 @@ Namespace VsiTools
             End If
 
             'Generate a new Vsix package
-            newVsixPackage.Build(vsixFileName)
+            newVsixPackage.Build(vsixFileName, SnippetTools.IDEType.VisualStudio)
         End Sub
 
         ''' <summary>
@@ -155,7 +155,7 @@ Namespace VsiTools
             Next
 
             'Generate a new Vsix package
-            package.Build(vsixFileName)
+            package.Build(vsixFileName, SnippetTools.IDEType.VisualStudio)
         End Sub
 
         Public Shared Function Vsi2Vsix(vsiFileName As String) As VSIXPackage
