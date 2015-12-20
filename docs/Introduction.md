@@ -15,8 +15,10 @@ The library is available for Visual Studio 2015 to both Visual Basic and C# and 
 If you want to create, package and share code snippets for Visual Studio 2015, please read the following:
 
 [Working with Code Snippets](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/WorkingWithCodeSnippets.md)
+
 [Packaging Snippets for Visual Studio](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/PackagingSnippetsForVisualStudio.md)
 
 If you want to create, package and share code snippets for Visual Studio Code, please read the following:
 [Working with Code Snippets](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/WorkingWithCodeSnippets.md)
+
 [Packaging Snippets for Code](https://github.com/AlessandroDelSole/delsolevsix/blob/master/docs/PackagingSnippetsForCode.md)
