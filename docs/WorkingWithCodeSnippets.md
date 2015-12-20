@@ -41,7 +41,7 @@ The DelSole.VSIX library expose the `DelSole.VSIX.SnippetTools` namespaces, whic
 
 ## The `CodeSnippet` class
 
-The `DelSole.VSIX.SnippetTools.CodeSnippet` class represents a .snippet file compliant with the [Code Snippet Schema Reference](https://msdn.microsoft.com/en-us/library/ms171418.aspx). The following code demonstrates how to create a code snippet:
+The `DelSole.VSIX.SnippetTools.CodeSnippet` class represents a .snippet file compliant with the [Code Snippet Schema Reference](https://msdn.microsoft.com/en-us/library/ms171418.aspx) and, with the exception of namespaces and references, a .json snippet file. The following code demonstrates how to create a code snippet:
 
   ```csharp
             CodeSnippet myCodeSnippet = new CodeSnippet();
