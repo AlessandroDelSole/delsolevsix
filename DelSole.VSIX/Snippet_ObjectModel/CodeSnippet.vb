@@ -323,7 +323,7 @@ Namespace SnippetTools
                         Me.RemoveError("Title")
                     End If
                 Case Is = "Code"
-                    If Me.Author = "" Or String.IsNullOrEmpty(Me.Author) Then
+                    If Me.Code = "" Or String.IsNullOrEmpty(Me.Code) Then
                         Me.AddError("Code", "Value cannot be null")
                     Else
                         Me.RemoveError("Code")
@@ -360,6 +360,7 @@ Namespace SnippetTools
         ''' Type initialization
         ''' </summary>
         Public Sub New()
+            Author = My.Computer.Name
             Keywords = ""
             HelpUrl = ""
             Kind = CodeSnippetKinds.MethodBody
@@ -587,7 +588,7 @@ Namespace SnippetTools
 
             Dim TextLines() As String = editedCode.Split(Environment.NewLine.ToCharArray)
 
-            Using str As New StringWriter
+            Using str As New StreamWriter(fileName)
                 Using jw As New JsonTextWriter(str)
                     jw.Formatting = Formatting.Indented
                     jw.WriteStartObject()
@@ -606,8 +607,6 @@ Namespace SnippetTools
                     jw.WriteEndObject()
                     jw.WriteEndObject()
                 End Using
-                Dim resultingString = str.GetStringBuilder.ToString()
-                My.Computer.FileSystem.WriteAllText(fileName, resultingString, False)
             End Using
         End Sub
 
