@@ -2,7 +2,9 @@
 Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.IO
+Imports System.Text
 Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
 Imports <xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 
 Namespace SnippetTools
@@ -480,48 +482,69 @@ Namespace SnippetTools
                 Throw New IO.FileNotFoundException("File not found", fileName)
             End If
 
-            Dim doc = XDocument.Load(fileName)
-            Dim snippet As New CodeSnippet
+            Dim snippet As CodeSnippet
 
-            snippet.Author = doc...<Author>.Value
-            snippet.Code = doc...<Code>.Value
-            snippet.Description = doc...<Description>.Value
-            snippet.HelpUrl = doc...<HelpUrl>.Value
-            snippet.Language = doc...<Code>.@Language
-            snippet.Shortcut = doc...<Shortcut>.Value
-            snippet.Title = doc...<Title>.Value
+            'snippet for VS Code
+            If IO.Path.GetExtension(fileName).ToLower.EndsWith("json") Then
+                snippet = New CodeSnippet
 
-            Dim kwQuery = From kw In doc...<Keyword>
-                          Select kw.Value
+                Dim json = My.Computer.FileSystem.ReadAllText(fileName)
+                Dim pos = json.IndexOf(":"c)
+                json = json.Substring(pos + 1)
 
-            If kwQuery.Any Then
-                For Each kw In kwQuery
-                    snippet.Keywords = snippet.Keywords & "," & kw
+                Dim snippetBody As New StringBuilder
+                Dim actualJson = JObject.Parse(json)
+                Dim codeJsonArray = actualJson.SelectToken("body")
+                For Each lineOfCode In codeJsonArray
+                    snippetBody.AppendLine(lineOfCode.ToString)
                 Next
-            End If
+                snippet.Author = My.Computer.Name
+                snippet.Code = snippetBody.ToString
+                Return snippet
+            Else
+                'Snippet for VS
+                Dim doc = XDocument.Load(fileName)
+                snippet = New CodeSnippet
 
-            If snippet.Language.ToUpper = "VB" Then
-                Dim refQuery = From ref In doc...<Reference>
-                               Select New Reference With {.Assembly = ref.<Assembly>.Value, .Url = ref.<Url>.Value}
+                snippet.Author = doc...<Author>.Value
+                snippet.Code = doc...<Code>.Value
+                snippet.Description = doc...<Description>.Value
+                snippet.HelpUrl = doc...<HelpUrl>.Value
+                snippet.Language = doc...<Code>.@Language
+                snippet.Shortcut = doc...<Shortcut>.Value
+                snippet.Title = doc...<Title>.Value
 
-                If refQuery.Any Then
-                    For Each ref In refQuery
-                        snippet.References.Add(ref)
+                Dim kwQuery = From kw In doc...<Keyword>
+                              Select kw.Value
+
+                If kwQuery.Any Then
+                    For Each kw In kwQuery
+                        snippet.Keywords = snippet.Keywords & "," & kw
                     Next
                 End If
 
-                Dim impQuery = From imp In doc...<Import>
-                               Select New Import With {.ImportDirective = imp.<Namespace>.Value}
+                If snippet.Language.ToUpper = "VB" Then
+                    Dim refQuery = From ref In doc...<Reference>
+                                   Select New Reference With {.Assembly = ref.<Assembly>.Value, .Url = ref.<Url>.Value}
 
-                If impQuery.Any Then
-                    For Each imp In impQuery
-                        snippet.Namespaces.Add(imp)
-                    Next
+                    If refQuery.Any Then
+                        For Each ref In refQuery
+                            snippet.References.Add(ref)
+                        Next
+                    End If
+
+                    Dim impQuery = From imp In doc...<Import>
+                                   Select New Import With {.ImportDirective = imp.<Namespace>.Value}
+
+                    If impQuery.Any Then
+                        For Each imp In impQuery
+                            snippet.Namespaces.Add(imp)
+                        Next
+                    End If
                 End If
-            End If
 
-            Dim litQuery = From decl In doc...<Literal>
-                           Select New Declaration With {.ID = decl.<ID>.Value,
+                Dim litQuery = From decl In doc...<Literal>
+                               Select New Declaration With {.ID = decl.<ID>.Value,
 .Default = decl.<Default>.Value,
 .Editable = True,
 .Function = decl.<Function>.Value,
@@ -529,8 +552,8 @@ Namespace SnippetTools
 .Type = decl.<Type>.Value,
 .ReplacementType = "Literal"}
 
-            Dim objQuery = From decl In doc...<Object>
-                           Select New Declaration With {.ID = decl.<ID>.Value,
+                Dim objQuery = From decl In doc...<Object>
+                               Select New Declaration With {.ID = decl.<ID>.Value,
 .Default = decl.<Default>.Value,
 .Editable = True,
 .Function = decl.<Function>.Value,
@@ -538,38 +561,40 @@ Namespace SnippetTools
 .Type = decl.<Type>.Value,
 .ReplacementType = "Object"}
 
-            If litQuery.Any Then
-                For Each lit In litQuery
-                    snippet.Declarations.Add(lit)
+                If litQuery.Any Then
+                    For Each lit In litQuery
+                        snippet.Declarations.Add(lit)
+                    Next
+                End If
+
+                If objQuery.Any Then
+                    For Each obj In objQuery
+                        snippet.Declarations.Add(obj)
+                    Next
+                End If
+
+                Select Case doc...<Code>.@Kind.ToLower
+                    Case = "file"
+                        snippet.Kind = CodeSnippetKinds.File
+                    Case = "method body"
+                        snippet.Kind = CodeSnippetKinds.MethodBody
+                    Case = "method decl"
+                        snippet.Kind = CodeSnippetKinds.MethodDeclaration
+                    Case = "type decl"
+                        snippet.Kind = CodeSnippetKinds.TypeDeclaration
+                    Case Else
+                        snippet.Kind = CodeSnippetKinds.Any
+                End Select
+
+                Dim code = doc...<Code>.Value
+
+                For Each decl In snippet.Declarations
+                    code = code.Replace($"{doc...<Code>.@Delimiter}{decl.ID}{doc...<Code>.@Delimiter}", decl.Default)
                 Next
+                snippet.Code = code
+                Return snippet
+
             End If
-
-            If objQuery.Any Then
-                For Each obj In objQuery
-                    snippet.Declarations.Add(obj)
-                Next
-            End If
-
-            Select Case doc...<Code>.@Kind.ToLower
-                Case = "file"
-                    snippet.Kind = CodeSnippetKinds.File
-                Case = "method body"
-                    snippet.Kind = CodeSnippetKinds.MethodBody
-                Case = "method decl"
-                    snippet.Kind = CodeSnippetKinds.MethodDeclaration
-                Case = "type decl"
-                    snippet.Kind = CodeSnippetKinds.TypeDeclaration
-                Case Else
-                    snippet.Kind = CodeSnippetKinds.Any
-            End Select
-
-            Dim code = doc...<Code>.Value
-
-            For Each decl In snippet.Declarations
-                code = code.Replace($"{doc...<Code>.@Delimiter}{decl.ID}{doc...<Code>.@Delimiter}", decl.Default)
-            Next
-            snippet.Code = code
-            Return snippet
         End Function
 
         ''' <summary>
