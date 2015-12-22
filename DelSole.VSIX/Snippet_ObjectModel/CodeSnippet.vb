@@ -32,6 +32,8 @@ Namespace SnippetTools
 #End Region
 
 #Region "Properties"
+        Public Property IsDirty As Boolean
+
         ''' <summary>
         ''' The code snippet author
         ''' </summary>
@@ -46,6 +48,7 @@ Namespace SnippetTools
             Set(value As String)
                 _author = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Author)))
+                IsDirty = True
                 CheckValue(NameOf(Author))
             End Set
         End Property
@@ -64,6 +67,7 @@ Namespace SnippetTools
             Set(value As String)
                 _title = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Title)))
+                IsDirty = True
                 CheckValue(NameOf(Title))
             End Set
         End Property
@@ -82,6 +86,7 @@ Namespace SnippetTools
             Set(value As String)
                 _description = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Description)))
+                IsDirty = True
             End Set
         End Property
 
@@ -99,6 +104,7 @@ Namespace SnippetTools
             Set(value As String)
                 _helpUrl = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(HelpUrl)))
+                IsDirty = True
             End Set
         End Property
 
@@ -116,6 +122,7 @@ Namespace SnippetTools
             Set(value As String)
                 _shortcut = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Shortcut)))
+                IsDirty = True
             End Set
         End Property
 
@@ -133,6 +140,7 @@ Namespace SnippetTools
             Set(value As String)
                 _keywords = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Keywords)))
+                IsDirty = True
             End Set
         End Property
 
@@ -150,6 +158,7 @@ Namespace SnippetTools
             Set(value As CodeSnippetKinds)
                 _kind = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Kind)))
+                IsDirty = True
             End Set
         End Property
 
@@ -167,6 +176,7 @@ Namespace SnippetTools
             Set(value As [Imports])
                 _namespaces = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Namespaces)))
+                IsDirty = True
             End Set
         End Property
 
@@ -184,6 +194,7 @@ Namespace SnippetTools
             Set(value As References)
                 _references = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(References)))
+                IsDirty = True
             End Set
         End Property
 
@@ -201,6 +212,7 @@ Namespace SnippetTools
             Set(value As Declarations)
                 _declarations = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Declarations)))
+                IsDirty = True
             End Set
         End Property
 
@@ -219,6 +231,7 @@ Namespace SnippetTools
                 _code = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Code)))
                 CheckValue(NameOf(Code))
+                IsDirty = True
             End Set
         End Property
 
@@ -238,6 +251,7 @@ Namespace SnippetTools
                 _language = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Language)))
                 CheckValue(NameOf(Language))
+                IsDirty = True
             End Set
         End Property
 #End Region
@@ -399,29 +413,28 @@ Namespace SnippetTools
         ''' Create and save a code snippet file to disk
         ''' </summary>
         ''' <param name="fileName">The target snippet file name</param>
-        ''' <param name="snippetData">The instance of <seealso cref="CodeSnippet"/> </param>
-        Private Shared Sub SaveVisualStudioSnippet(fileName As String, snippetData As CodeSnippet)
-            Dim snippetKind As String = ReturnSnippetKind(snippetData.Kind)
+        Private Sub SaveVisualStudioSnippet(fileName As String)
+            Dim snippetKind As String = ReturnSnippetKind(Me.Kind)
 
-            Dim editedCode = snippetData.Code
+            Dim editedCode = Me.Code
 
-            If snippetData.Declarations.Any Then
-                For Each decl In snippetData.Declarations
+            If Me.Declarations.Any Then
+                For Each decl In Me.Declarations
                     editedCode = editedCode.Replace(decl.Default, "$" & decl.ID & "$")
                 Next
             End If
 
-            Dim keywords = snippetData.Keywords.Split(","c).AsEnumerable
+            Dim keywords = Me.Keywords.Split(","c).AsEnumerable
 
             Dim cdata As New XCData(editedCode)
             Dim doc = <?xml version="1.0" encoding="utf-8"?>
                       <CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
                           <CodeSnippet Format="1.0.0">
                               <Header>
-                                  <Title><%= snippetData.Title %></Title>
-                                  <Author><%= snippetData.Author %></Author>
-                                  <Description><%= snippetData.Description %></Description>
-                                  <HelpUrl><%= snippetData.HelpUrl %></HelpUrl>
+                                  <Title><%= Me.Title %></Title>
+                                  <Author><%= Me.Author %></Author>
+                                  <Description><%= Me.Description %></Description>
+                                  <HelpUrl><%= Me.HelpUrl %></HelpUrl>
                                   <SnippetTypes>
                                       <SnippetType>Expansion</SnippetType>
                                   </SnippetTypes>
@@ -429,24 +442,24 @@ Namespace SnippetTools
                                       <%= From key In keywords
                                           Select <Keyword><%= key %></Keyword> %>
                                   </Keywords>
-                                  <Shortcut><%= snippetData.Shortcut %></Shortcut>
+                                  <Shortcut><%= Me.Shortcut %></Shortcut>
                               </Header>
                               <Snippet>
                                   <References>
-                                      <%= From ref In snippetData.References
+                                      <%= From ref In Me.References
                                           Select <Reference>
                                                      <Assembly><%= ref.Assembly %></Assembly>
                                                      <Url><%= ref.Url %></Url>
                                                  </Reference> %>
                                   </References>
                                   <Imports>
-                                      <%= From imp In snippetData.Namespaces
+                                      <%= From imp In Me.Namespaces
                                           Select <Import>
                                                      <Namespace><%= imp.ImportDirective %></Namespace>
                                                  </Import> %>
                                   </Imports>
                                   <Declarations>
-                                      <%= From decl In snippetData.Declarations
+                                      <%= From decl In Me.Declarations
                                           Where decl.ReplacementType.ToLower = "object"
                                           Select <Object Editable="true">
                                                      <ID><%= decl.ID %></ID>
@@ -455,7 +468,7 @@ Namespace SnippetTools
                                                      <Default><%= decl.Default %></Default>
                                                      <Function><%= decl.Function %></Function>
                                                  </Object> %>
-                                      <%= From decl In snippetData.Declarations
+                                      <%= From decl In Me.Declarations
                                           Where decl.ReplacementType.ToLower = "literal"
                                           Select <Literal Editable="true">
                                                      <ID><%= decl.ID %></ID>
@@ -464,7 +477,7 @@ Namespace SnippetTools
                                                      <Function><%= decl.Function %></Function>
                                                  </Literal> %>
                                   </Declarations>
-                                  <Code Language=<%= snippetData.Language %> Kind=<%= snippetKind %>
+                                  <Code Language=<%= Me.Language %> Kind=<%= snippetKind %>
                                       Delimiter="$"><%= cdata %></Code>
                               </Snippet>
                           </CodeSnippet>
@@ -601,12 +614,11 @@ Namespace SnippetTools
         ''' Save a code snippet for Visual Studio Code
         ''' </summary>
         ''' <param name="fileName"></param>
-        ''' <param name="snippetData"></param>
-        Private Shared Sub SaveVSCodeSnippet(fileName As String, snippetData As CodeSnippet)
-            Dim editedCode = snippetData.Code
+        Private Sub SaveVSCodeSnippet(fileName As String)
+            Dim editedCode = Me.Code
 
-            If snippetData.Declarations.Any Then
-                For Each decl In snippetData.Declarations
+            If Me.Declarations.Any Then
+                For Each decl In Me.Declarations
                     editedCode = editedCode.Replace(decl.Default, "${" & decl.ID & "}")
                 Next
             End If
@@ -617,10 +629,10 @@ Namespace SnippetTools
                 Using jw As New JsonTextWriter(str)
                     jw.Formatting = Formatting.Indented
                     jw.WriteStartObject()
-                    jw.WritePropertyName(snippetData.Title)
+                    jw.WritePropertyName(Me.Title)
                     jw.WriteStartObject()
                     jw.WritePropertyName("prefix")
-                    jw.WriteValue(snippetData.Shortcut)
+                    jw.WriteValue(Me.Shortcut)
                     jw.WritePropertyName("body")
                     jw.WriteStartArray()
                     For Each line As String In TextLines
@@ -628,7 +640,7 @@ Namespace SnippetTools
                     Next
                     jw.WriteEndArray()
                     jw.WritePropertyName("description")
-                    jw.WriteValue(snippetData.Description)
+                    jw.WriteValue(Me.Description)
                     jw.WriteEndObject()
                     jw.WriteEndObject()
                 End Using
@@ -639,18 +651,18 @@ Namespace SnippetTools
         ''' Create and save a code snippet file to disk
         ''' </summary>
         ''' <param name="fileName">The target snippet file name</param>
-        ''' <param name="snippetData">The instance of <seealso cref="CodeSnippet"/> </param>
         ''' <param name="ideType">A value from <seealso cref="IDEType"/> that determines if the snippet must target Visual Studio or Code</param>
-        Public Shared Sub SaveSnippet(fileName As String, snippetData As CodeSnippet, ideType As IDEType)
-            If snippetData.HasErrors Then
+        Public Sub SaveSnippet(fileName As String, ideType As IDEType)
+            If Me.HasErrors Then
                 Throw New InvalidOperationException("The supplied instance of CodeSnippet has errors that must be fixed first.")
             End If
 
             If ideType = IDEType.VisualStudio Then
-                SaveVisualStudioSnippet(fileName, snippetData)
+                SaveVisualStudioSnippet(fileName)
             Else
-                SaveVSCodeSnippet(fileName, snippetData)
+                SaveVSCodeSnippet(fileName)
             End If
+            IsDirty = False
         End Sub
 
     End Class
