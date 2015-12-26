@@ -87,12 +87,10 @@ Namespace SnippetTools
                       </Folders>
 
             doc.Save(pathName)
-            Dim f As New SnippetLibrary
-            f.LoadLibrary("")
         End Sub
 
         ''' <summary>
-        ''' Load a snippet library list from disk. Make sure you load a list that was previously saved with the SaveLibrary method.
+        ''' Load a snippet library list from disk. Make sure you load a list that was previously saved with the <seealso cref="SaveLibrary(String)"/> method.
         ''' </summary>
         ''' <param name="pathName"></param>
         Public Sub LoadLibrary(pathName As String)
