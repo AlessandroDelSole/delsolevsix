@@ -1,6 +1,6 @@
 
-#Understanding the VSIX format
-The VSIX (.vsix) file format allows packaging multiple Visual Studio extensions into one installer. With .vsix packages, you can easily share VS packages, editor extensions, language services, tool windows, project/item templates and, of course, code snippet files.
+#Understanding the .vsix format
+The Visual Studio Extensibility (.vsix) file format allows packaging multiple Visual Studio extensions into one installer. With .vsix packages, you can easily share VS packages, editor extensions, language services, tool windows, project/item templates and, of course, code snippet files.
 
 A .vsix file is nothing but a .zip archive based on the Open XML conventions. A .vsix package must contain:
 
@@ -53,11 +53,11 @@ the product name, the package description, the version number, the license agree
  ```
  
 #Building a VSIX package
-Once you have populated the CodeSnippets property and once you have assigned the package metadata, you are ready to go! Building a .vsix is very simple, in fact you simply invoke the `VSIXPackage.Build` method, passing the target file name:
+Once you have populated the `CodeSnippets` property and once you have assigned the package metadata, you are ready to go! Building a .vsix is very simple, in fact you simply invoke the `VSIXPackage.Build` method, passing the target file name and the supported IDE type:
  
    ```csharp
             //Go build it!
-            Vsix.Build("C:\\temp\\Sample.vsix");
+            Vsix.Build("C:\\temp\\Sample.vsix", SnippetTools.IDEType.VisualStudio);
  ```
  
 #Opening an existing .vsix package

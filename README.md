@@ -1,6 +1,6 @@
 #DelSole.VSIX
 
-The DelSole.VSIX Library helps generating .vsix packages to share and install reusable code snippets for Visual Studio 2013 and 2015, with integrated Roslyn code analysis, and allows generating IntelliSense code snippet as well as working with .vsi packages.
+The DelSole.VSIX Library helps generating .vsix packages to share and install reusable code snippets for **Visual Studio 2015** and now **Visual Studio Code**, with integrated Roslyn code analysis, and allows generating IntelliSense code snippet as well as working with .vsi packages.
 
 The library is available for Visual Studio 2015 and can be [downloaded from NuGet](https://www.nuget.org/packages/DelSole.VSIX).
 
