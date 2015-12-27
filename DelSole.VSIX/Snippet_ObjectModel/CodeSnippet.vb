@@ -254,6 +254,14 @@ Namespace SnippetTools
                 IsDirty = True
             End Set
         End Property
+
+        Private _fileName As String
+        Public ReadOnly Property FileName As String
+            Get
+                Return _fileName
+            End Get
+        End Property
+
 #End Region
 
 #Region "Data validation support"
@@ -483,6 +491,7 @@ Namespace SnippetTools
                           </CodeSnippet>
                       </CodeSnippets>
             doc.Save(fileName)
+            Me._fileName = IO.Path.GetFileName(fileName)
         End Sub
 
         ''' <summary>
@@ -605,6 +614,7 @@ Namespace SnippetTools
                     code = code.Replace($"{doc...<Code>.@Delimiter}{decl.ID}{doc...<Code>.@Delimiter}", decl.Default)
                 Next
                 snippet.Code = code
+                snippet._fileName = IO.Path.GetFileName(fileName)
                 Return snippet
 
             End If
@@ -645,6 +655,7 @@ Namespace SnippetTools
                     jw.WriteEndObject()
                 End Using
             End Using
+            Me._fileName = IO.Path.GetFileName(fileName)
         End Sub
 
         ''' <summary>

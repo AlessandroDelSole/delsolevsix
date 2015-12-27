@@ -1,79 +1,53 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.ComponentModel
 
 Namespace SnippetTools
     Public Class SnippetLibrary
-        Inherits ObservableCollection(Of SnippetFolder)
+        Implements System.ComponentModel.INotifyPropertyChanged
+
+        Private _folders As ObservableCollection(Of SnippetFolder)
+
+        Public Sub New()
+            Me.Folders = New ObservableCollection(Of SnippetFolder)
+        End Sub
+
+        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+        ''' <summary>
+        ''' Return the collection of folders in the library
+        ''' </summary>
+        ''' <returns></returns>
+        Public Property Folders As ObservableCollection(Of SnippetFolder)
+            Get
+                Return _folders
+            End Get
+            Set(value As ObservableCollection(Of SnippetFolder))
+                _folders = value
+                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Folders)))
+            End Set
+        End Property
 
         ''' <summary>
         ''' Return the full list of code snippets inside the library. 
         ''' </summary>
         ''' <returns></returns>
-        Public Function ReturnSnippets() As IEnumerable(Of String)
-            If Me.Items Is Nothing Then
-                Throw New InvalidOperationException("The folder collection is empty.")
-            End If
+        Public ReadOnly Property SnippetFiles As IEnumerable(Of String)
+            Get
 
-            Dim fileNames As New List(Of String)
-            For Each folder In Me
-                Dim files = IO.Directory.EnumerateFiles(folder.FolderName)
-                For Each fileName In files
-                    fileNames.Add(IO.Path.Combine(folder.FolderName, fileName))
-                Next
-            Next
-            Return fileNames.AsEnumerable
-        End Function
+                If Not Me.Folders.Any Then
+                    Throw New InvalidOperationException("The folder collection is empty.")
+                End If
 
-        ''' <summary>
-        ''' Return the full list of code snippets inside the specified folder. 
-        ''' </summary>
-        ''' <param name="folderName"></param>
-        ''' <returns></returns>
-        Public Function ReturnSnippets(folderName As String) As IEnumerable(Of String)
-            If Me.Items Is Nothing Then
-                Throw New InvalidOperationException("The folder collection is empty.")
-            End If
-
-            Dim query = (From fold In Me
-                         Where fold.FolderName.ToLower = folderName.ToLower
-                         Select fold).FirstOrDefault
-
-            If query IsNot Nothing Then
                 Dim fileNames As New List(Of String)
-                Dim files = IO.Directory.EnumerateFiles(query.FolderName)
-                For Each fileName In files
-                    fileNames.Add(IO.Path.Combine(query.FolderName, fileName))
+                For Each folder In Me.Folders
+                    Dim files = IO.Directory.EnumerateFiles(folder.FolderName)
+                    For Each fileName In files
+                        fileNames.Add(fileName)
+                    Next
                 Next
                 Return fileNames.AsEnumerable
-            Else
-                Return Nothing
-            End If
-        End Function
-
-        ''' <summary>
-        ''' Return the full list of code snippets inside the specified folder. 
-        ''' </summary>
-        ''' <param name="folderInfo"></param>
-        ''' <returns></returns>
-        Public Function ReturnSnippets(folderInfo As SnippetFolder) As IEnumerable(Of String)
-            If Me.Items Is Nothing Then
-                Throw New InvalidOperationException("The folder collection is empty.")
-            End If
-
-            Dim query = (From fold In Me
-                         Where fold.FolderName.ToLower = folderInfo.FolderName.ToLower
-                         Select fold).FirstOrDefault
-
-            If query IsNot Nothing Then
-                Dim fileNames As New List(Of String)
-                Dim files = IO.Directory.EnumerateFiles(query.FolderName)
-                For Each fileName In files
-                    fileNames.Add(IO.Path.Combine(query.FolderName, fileName))
-                Next
-                Return fileNames.AsEnumerable
-            Else
-                Return Nothing
-            End If
-        End Function
+            End Get
+        End Property
 
         ''' <summary>
         ''' Save a library of folders containing code snippets
@@ -82,13 +56,11 @@ Namespace SnippetTools
         Public Sub SaveLibrary(pathName As String)
             Dim doc = <?xml version="1.0" encoding="utf-8"?>
                       <Folders>
-                          <%= From fold In Me
+                          <%= From fold In Me.Folders
                               Select <Folder FolderName=<%= fold.FolderName %>/> %>
                       </Folders>
 
             doc.Save(pathName)
-            Dim f As New SnippetLibrary
-            f.LoadLibrary("")
         End Sub
 
         ''' <summary>
@@ -103,7 +75,7 @@ Namespace SnippetTools
             For Each element In query
                 Dim folder As New SnippetFolder
                 folder.FolderName = element
-                Me.Add(folder)
+                Me.Folders.Add(folder)
             Next
         End Sub
     End Class
