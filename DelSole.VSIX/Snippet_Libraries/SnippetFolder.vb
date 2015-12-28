@@ -28,7 +28,36 @@ Namespace SnippetTools
         ''' <returns></returns>
         Public ReadOnly Property SnippetFiles As IEnumerable(Of CodeSnippet)
             Get
-                Dim files = From ff In IO.Directory.EnumerateFiles(FolderName, "*.*")
+                Dim files = From ff In IO.Directory.EnumerateFiles(FolderName)
+                            Where IO.Path.GetExtension(ff).ToLower.Contains("snippet") Or IO.Path.GetExtension(ff).ToLower = ".json"
+                            Select ff
+
+                If files.Any Then
+                    Dim snips As New List(Of CodeSnippet)
+                    For Each snip In files
+                        Try
+                            Dim newSnip = CodeSnippet.LoadSnippet(snip)
+                            snips.Add(newSnip)
+                        Catch ex As Exception
+                            'Error, ignore snippet
+                        End Try
+                    Next
+                    Return snips.AsEnumerable
+                Else
+                    Return Nothing
+                End If
+            End Get
+        End Property
+
+        ''' <summary>
+        ''' Return the list of snippet file names in the current folder given the specified filter
+        ''' </summary>
+        ''' <param name="filter"></param>
+        ''' <returns></returns>
+        Public ReadOnly Property SnippetFiles(filter As String) As IEnumerable(Of CodeSnippet)
+            Get
+                Dim files = From ff In IO.Directory.EnumerateFiles(FolderName)
+                            Where ff.ToLowerInvariant.Contains(filter.ToLowerInvariant)
                             Where IO.Path.GetExtension(ff).ToLower.Contains("snippet") Or IO.Path.GetExtension(ff).ToLower = ".json"
                             Select ff
 
