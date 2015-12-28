@@ -28,12 +28,19 @@ Namespace SnippetTools
         ''' <returns></returns>
         Public ReadOnly Property SnippetFiles As IEnumerable(Of CodeSnippet)
             Get
-                Dim files = IO.Directory.EnumerateFiles(FolderName, "*.*snippet")
+                Dim files = From ff In IO.Directory.EnumerateFiles(FolderName, "*.*")
+                            Where IO.Path.GetExtension(ff).ToLower.Contains("snippet") Or IO.Path.GetExtension(ff).ToLower = ".json"
+                            Select ff
+
                 If files.Any Then
                     Dim snips As New List(Of CodeSnippet)
                     For Each snip In files
-                        Dim newSnip = CodeSnippet.LoadSnippet(snip)
-                        snips.Add(newSnip)
+                        Try
+                            Dim newSnip = CodeSnippet.LoadSnippet(snip)
+                            snips.Add(newSnip)
+                        Catch ex As Exception
+                            'Error, ignore snippet
+                        End Try
                     Next
                     Return snips.AsEnumerable
                 Else
