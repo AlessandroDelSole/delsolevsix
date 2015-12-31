@@ -646,7 +646,7 @@ Namespace SnippetTools
                     jw.WritePropertyName("body")
                     jw.WriteStartArray()
                     For Each line As String In TextLines
-                        jw.WriteValue(line)
+                        If Not line.Length = 0 Then jw.WriteValue(line)
                     Next
                     jw.WriteEndArray()
                     jw.WritePropertyName("description")
