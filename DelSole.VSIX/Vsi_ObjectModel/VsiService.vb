@@ -41,7 +41,7 @@ Namespace VsiTools
                 Throw New InvalidOperationException("The specified .vsi package does not contain any code snippets")
             End If
 
-            Dim newVsixPackage As New VSIXPackage
+            Dim newVsixPackage As New VsixPackage
 
             'In a .vsi, EULA is a zip comment. So, has it comments/EULA?
             If oldVsi.Comment <> "" Or String.IsNullOrWhiteSpace(oldVsi.Comment) = False Then
@@ -112,8 +112,8 @@ Namespace VsiTools
         ''' </summary>
         ''' <param name="vsiFileName">File name of the source .vsi archive</param>
         ''' <param name="vsixFileName">File name of the destination .vsix package</param>
-        ''' <param name="package">An instance of <seealso cref="VSIXPackage"/> with metadata already populated</param>
-        Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String, package As VSIXPackage)
+        ''' <param name="package">An instance of <seealso cref="VsixPackage"/> with metadata already populated</param>
+        Public Shared Sub Vsi2Vsix(vsiFileName As String, vsixFileName As String, package As VsixPackage)
             If Not IO.File.Exists(vsiFileName) Then
                 Throw New ArgumentException("File not found", NameOf(vsiFileName))
             End If
@@ -158,7 +158,7 @@ Namespace VsiTools
             package.Build(vsixFileName, SnippetTools.IDEType.VisualStudio)
         End Sub
 
-        Public Shared Function Vsi2Vsix(vsiFileName As String) As VSIXPackage
+        Public Shared Function Vsi2Vsix(vsiFileName As String) As VsixPackage
             If Not IO.File.Exists(vsiFileName) Then
                 Throw New ArgumentException("File not found", NameOf(vsiFileName))
             End If
@@ -178,7 +178,7 @@ Namespace VsiTools
                 Throw New InvalidOperationException("The specified .vsi package does not contain any code snippets")
             End If
 
-            Dim newVsixPackage As New VSIXPackage
+            Dim newVsixPackage As New VsixPackage
 
             'In a .vsi, EULA is a zip comment. So, has it comments/EULA?
             If oldVsi.Comment <> "" Or String.IsNullOrWhiteSpace(oldVsi.Comment) = False Then

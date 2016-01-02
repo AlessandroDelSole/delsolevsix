@@ -10,7 +10,7 @@ Imports Newtonsoft.Json
 ''' Represent a VSIX package with its contents and metadata,
 ''' and provides methods for VSIX generation
 ''' </summary>
-Public Class VSIXPackage
+Public Class VsixPackage
     Implements INotifyPropertyChanged
     Implements IDataErrorInfo
 
@@ -376,7 +376,7 @@ Public Class VSIXPackage
     ''' </summary>
     ''' <param name="fileName"></param>
     ''' <returns>VSIXPackage</returns>
-    Public Shared Function OpenVsix(fileName As String) As VSIXPackage
+    Public Shared Function OpenVsix(fileName As String) As VsixPackage
         If Not File.Exists(fileName) Then
             Throw New FileNotFoundException("File not found", fileName)
         End If
@@ -384,7 +384,7 @@ Public Class VSIXPackage
         Dim tempVsixFolder = GetTempFolder(Path.GetFileNameWithoutExtension(fileName))
         ExtractVsix(fileName, tempVsixFolder, False)
 
-        Dim vsix As New VSIXPackage
+        Dim vsix As New VsixPackage
         Dim snipCollection = IO.Directory.EnumerateFiles(tempVsixFolder, "*.*snippet", SearchOption.AllDirectories)
         If Not snipCollection.Any Then
             Throw New InvalidOperationException("The specified .vsix package does not contain any code snippets.")
@@ -702,6 +702,31 @@ Public Class VSIXPackage
                 RaiseEvent FileAddedToPackage(Me, New FileAddedToPackageEventArgs(ioFile))
             Next
         End Using
+    End Sub
+
+    ''' <summary>
+    ''' Populate the <seealso cref="CodeSnippets"/> property with code snippets in the 
+    ''' specified <seealso cref="SnippetTools.SnippetLibrary"/>
+    ''' </summary>
+    Public Sub PopulateFromSnippetLibrary(library As SnippetTools.SnippetLibrary)
+        Dim tempColl As New SnippetInfoCollection
+        Try
+            For Each fold In library.Folders
+                For Each snippet In IO.Directory.EnumerateFiles(fold.FolderName).Where(Function(f) IO.Path.GetExtension(f).ToLowerInvariant.Contains("snippet"))
+                    Dim sninfo As New SnippetInfo
+                    sninfo.SnippetPath = fold.FolderName
+                    sninfo.SnippetFileName = IO.Path.GetFileName(snippet)
+                    sninfo.SnippetDescription = SnippetInfo.GetSnippetDescription(snippet)
+                    sninfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(snippet)
+                    tempColl.Add(sninfo)
+                Next
+            Next
+            CodeSnippets.Clear()
+            CodeSnippets = tempColl
+        Catch ex As Exception
+            tempColl = Nothing
+            Throw
+        End Try
     End Sub
 #End Region
 
