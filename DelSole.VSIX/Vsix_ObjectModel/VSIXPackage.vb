@@ -712,14 +712,40 @@ Public Class VsixPackage
         Dim tempColl As New SnippetInfoCollection
         Try
             For Each fold In library.Folders
-                For Each snippet In IO.Directory.EnumerateFiles(fold.FolderName).Where(Function(f) IO.Path.GetExtension(f).ToLowerInvariant.Contains("snippet"))
-                    Dim sninfo As New SnippetInfo
-                    sninfo.SnippetPath = fold.FolderName
-                    sninfo.SnippetFileName = IO.Path.GetFileName(snippet)
-                    sninfo.SnippetDescription = SnippetInfo.GetSnippetDescription(snippet)
-                    sninfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(snippet)
-                    tempColl.Add(sninfo)
-                Next
+                If IO.Directory.Exists(fold.FolderName) Then
+                    For Each snippet In IO.Directory.EnumerateFiles(fold.FolderName).Where(Function(f) IO.Path.GetExtension(f).ToLowerInvariant.Contains("snippet"))
+                        Dim sninfo As New SnippetInfo
+                        sninfo.SnippetPath = fold.FolderName
+                        sninfo.SnippetFileName = IO.Path.GetFileName(snippet)
+                        sninfo.SnippetDescription = SnippetInfo.GetSnippetDescription(snippet)
+                        sninfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(snippet)
+                        tempColl.Add(sninfo)
+                    Next
+                End If
+            Next
+            CodeSnippets.Clear()
+            CodeSnippets = tempColl
+        Catch ex As Exception
+            tempColl = Nothing
+            Throw
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Populate the <seealso cref="CodeSnippets"/> property with code snippets in the 
+    ''' specified <seealso cref="SnippetTools.SnippetLibrary"/>
+    ''' </summary>
+    Public Sub PopulateFromSnippetLibrary(library As SnippetTools.SnippetLibrary, folder As SnippetTools.SnippetFolder)
+        Dim tempColl As New SnippetInfoCollection
+        Try
+            If Not IO.Directory.Exists(folder.FolderName) Then Throw New ArgumentException($"The {folder.FolderName} directory does not exist on disk", NameOf(folder))
+            For Each snippet In IO.Directory.EnumerateFiles(folder.FolderName).Where(Function(f) IO.Path.GetExtension(f).ToLowerInvariant.Contains("snippet"))
+                Dim sninfo As New SnippetInfo
+                sninfo.SnippetPath = folder.FolderName
+                sninfo.SnippetFileName = IO.Path.GetFileName(snippet)
+                sninfo.SnippetDescription = SnippetInfo.GetSnippetDescription(snippet)
+                sninfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(snippet)
+                tempColl.Add(sninfo)
             Next
             CodeSnippets.Clear()
             CodeSnippets = tempColl
