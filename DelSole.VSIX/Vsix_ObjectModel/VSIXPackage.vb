@@ -709,7 +709,6 @@ Public Class VsixPackage
     ''' specified <seealso cref="SnippetTools.SnippetLibrary"/>
     ''' </summary>
     Public Sub PopulateFromSnippetLibrary(library As SnippetTools.SnippetLibrary)
-        Dim tempColl As New SnippetInfoCollection
         Try
             For Each fold In library.Folders
                 If IO.Directory.Exists(fold.FolderName) Then
@@ -719,14 +718,11 @@ Public Class VsixPackage
                         sninfo.SnippetFileName = IO.Path.GetFileName(snippet)
                         sninfo.SnippetDescription = SnippetInfo.GetSnippetDescription(snippet)
                         sninfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(snippet)
-                        tempColl.Add(sninfo)
+                        If Not Me.CodeSnippets.Contains(sninfo) Then Me.CodeSnippets.Add(sninfo)
                     Next
                 End If
             Next
-            CodeSnippets.Clear()
-            CodeSnippets = tempColl
         Catch ex As Exception
-            tempColl = Nothing
             Throw
         End Try
     End Sub
@@ -736,7 +732,6 @@ Public Class VsixPackage
     ''' specified <seealso cref="SnippetTools.SnippetLibrary"/>
     ''' </summary>
     Public Sub PopulateFromSnippetLibrary(library As SnippetTools.SnippetLibrary, folder As SnippetTools.SnippetFolder)
-        Dim tempColl As New SnippetInfoCollection
         Try
             If Not IO.Directory.Exists(folder.FolderName) Then Throw New ArgumentException($"The {folder.FolderName} directory does not exist on disk", NameOf(folder))
             For Each snippet In IO.Directory.EnumerateFiles(folder.FolderName).Where(Function(f) IO.Path.GetExtension(f).ToLowerInvariant.Contains("snippet"))
@@ -745,12 +740,9 @@ Public Class VsixPackage
                 sninfo.SnippetFileName = IO.Path.GetFileName(snippet)
                 sninfo.SnippetDescription = SnippetInfo.GetSnippetDescription(snippet)
                 sninfo.SnippetLanguage = SnippetInfo.GetSnippetLanguage(snippet)
-                tempColl.Add(sninfo)
+                If Not Me.CodeSnippets.Contains(sninfo) Then Me.CodeSnippets.Add(sninfo)
             Next
-            CodeSnippets.Clear()
-            CodeSnippets = tempColl
         Catch ex As Exception
-            tempColl = Nothing
             Throw
         End Try
     End Sub
