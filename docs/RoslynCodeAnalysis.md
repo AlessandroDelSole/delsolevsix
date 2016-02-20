@@ -4,7 +4,7 @@ The DelSole.VSIX library has integrated Roslyn code analysis for different scena
 
 ##Detecting issues in the snippet's code
 
-The `CodeSnippet` class can detect issues in the snippet's code using the Roslyn APIs (VB and C# snippets only). To run code analysis, you invoke the `AnalyzeCode` method. The result is assigned to the `Diagnostics` property, which is an `ObservableCollection<Microsoft.CodeAnalysis.Diagnostic>` and that can be easily data-bound. You use it like this:
+The `CodeSnippet` class can detect issues in the snippet's code using the [Roslyn](https://github.com/dotnet/roslyn) APIs (VB and C# snippets only). To run code analysis, you invoke the `AnalyzeCode` method. The result is assigned to the `Diagnostics` property, which is an `ObservableCollection<Microsoft.CodeAnalysis.Diagnostic>` and that can be easily data-bound. You use it like this:
 
   ```csharp
             myCodeSnippet.AnalyzeCode();
