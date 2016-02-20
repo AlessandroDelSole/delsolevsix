@@ -37,7 +37,7 @@ Namespace SnippetTools
         ''' The analysis result is assigned to the <seealso cref="Diagnostics"/> property
         ''' </summary>
         Public Sub AnalyzeCode()
-            Select Case Me.Language
+            Select Case Me.Language.ToUpper()
                 Case "VB"
                     Dim tree = VisualBasicSyntaxTree.ParseText(Me.Code).GetRoot
                     If tree.ContainsDiagnostics Then

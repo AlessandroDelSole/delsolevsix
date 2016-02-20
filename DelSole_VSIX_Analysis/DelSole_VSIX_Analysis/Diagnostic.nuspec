@@ -11,7 +11,7 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>The Del Sole's VSIX library helps generating code snippets for Visual Studio 2015 and Visual Studio Code, plus it allows creating VSIX packages to share reusable IntelliSense code snippet files for Visual Studio 2015 and Visual Studio Code. We provide integrated Roslyn code analysis for live issue detection as you type</description>
-    <releaseNotes>A Vsix package can be now populated from a snippet library</releaseNotes>
+    <releaseNotes>Now with live Roslyn analysis to detect code issues over a C# or VB snippet</releaseNotes>
     <copyright>Copyright (C), 2015 Alessandro Del Sole</copyright>
     <tags>vsix, snippet, roslyn, analyzers, extensibility</tags>
     <dependencies>
