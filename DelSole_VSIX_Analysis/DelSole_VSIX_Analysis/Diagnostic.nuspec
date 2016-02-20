@@ -17,6 +17,7 @@
     <dependencies>
       <dependency id="DotNetZip" version="1.9.7" />
       <dependency id="Newtonsoft.Json" version="8.0.1" />
+      <dependency id="Microsoft.CodeAnalysis" version="1.1.1" />
     </dependencies>
   </metadata>
   <!-- The convention for analyzers is to put language agnostic dlls in analyzers\dotnet and language specific analyzers in either analyzers\dotnet\cs or analyzers\dotnet\vb -->

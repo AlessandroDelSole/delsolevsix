@@ -3,6 +3,9 @@ Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.IO
 Imports System.Text
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.CSharp
+Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports <xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
@@ -15,6 +18,45 @@ Namespace SnippetTools
     Public Class CodeSnippet
         Implements INotifyPropertyChanged
         Implements IDataErrorInfo
+
+#Region "Roslyn Code Analysis"
+
+        Private _diagnostics As ObservableCollection(Of Diagnostic)
+        ''' <summary>
+        ''' Return a collection of Roslyn diagnostics for the current code snippet
+        ''' </summary>
+        ''' <returns></returns>
+        Public ReadOnly Property Diagnostics As ObservableCollection(Of Diagnostic)
+            Get
+                Return _diagnostics
+            End Get
+        End Property
+
+        ''' <summary>
+        ''' Perform Roslyn live analysis over the snippet's code (VB and C# only).
+        ''' The analysis result is assigned to the <seealso cref="Diagnostics"/> property
+        ''' </summary>
+        Public Sub AnalyzeCode()
+            Select Case Me.Language
+                Case "VB"
+                    Dim tree = VisualBasicSyntaxTree.ParseText(Me.Code).GetRoot
+                    If tree.ContainsDiagnostics Then
+                        Me._diagnostics = New ObservableCollection(Of Diagnostic)(tree.GetDiagnostics())
+                    Else
+                        Me._diagnostics = Nothing
+                    End If
+                Case "CSHARP"
+                    Dim tree = CSharpSyntaxTree.ParseText(Me.Code).GetRoot
+                    If tree.ContainsDiagnostics Then
+                        Me._diagnostics = New ObservableCollection(Of Diagnostic)(tree.GetDiagnostics())
+                    Else
+                        Me._diagnostics = Nothing
+                    End If
+                Case Else
+                    Me._diagnostics = Nothing
+            End Select
+        End Sub
+#End Region
 
 #Region "Backing fields"
         Private _author As String
@@ -697,4 +739,6 @@ Namespace SnippetTools
         Code
     End Enum
 #End Region
+
+
 End Namespace

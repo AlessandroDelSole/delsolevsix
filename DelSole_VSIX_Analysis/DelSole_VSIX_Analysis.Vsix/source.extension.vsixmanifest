@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="DelSole_VSIX_Analysis.Vsix..faed2857-c97f-4f67-8f66-d01e786aa392" Version="1.0" Language="en-US" Publisher="Alessandro Del Sole"/>
+    <Identity Id="DelSole_VSIX_Analysis.Vsix..faed2857-c97f-4f67-8f66-d01e786aa392" Version="1.0.1" Language="en-US" Publisher="Alessandro Del Sole"/>
     <DisplayName>DelSole.VSIX Roslyn Analysis</DisplayName>
     <Description xml:space="preserve">Roslyn analyzer for the DelSole.VSIX library.</Description>
   </Metadata>
