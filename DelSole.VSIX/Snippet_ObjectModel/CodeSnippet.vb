@@ -537,6 +537,45 @@ Namespace SnippetTools
         End Sub
 
         ''' <summary>
+        ''' Create a new <seealso cref="CodeSnippet"/> from a code file
+        ''' </summary>
+        ''' <param name="fileName">Must be a .vb, .cs, .sql, .xml, .xaml, .cpp, or .js file</param>
+        ''' <returns></returns>
+        Public Shared Function ImportCodeFile(fileName As String) As CodeSnippet
+            If Not IO.File.Exists(fileName) Then
+                Throw New IO.FileNotFoundException("File not found", fileName)
+            End If
+
+            Dim snippet As New CodeSnippet
+
+            Dim fileExt = IO.Path.GetExtension(fileName).ToLower()
+
+            Select Case fileExt
+                Case = ".vb"
+                    snippet.Language = "VB"
+                Case = ".cs"
+                    snippet.Language = "CSharp"
+                Case = ".js"
+                    snippet.Language = "JavaScript"
+                Case = ".cpp"
+                    snippet.Language = "CPP"
+                Case = ".sql"
+                    snippet.Language = "SQL"
+                Case = ".xml"
+                    snippet.Language = "XML"
+                Case = ".xaml"
+                    snippet.Language = "XAML"
+                Case Else
+                    snippet = Nothing
+                    Throw New NotSupportedException($"Files with {fileExt} extension are not supported")
+            End Select
+
+            snippet.Code = My.Computer.FileSystem.ReadAllText(fileName)
+
+            Return snippet
+        End Function
+
+        ''' <summary>
         ''' Load a code snippet from disk and return an instance of <seealso cref="CodeSnippet"/>
         ''' </summary>
         ''' <param name="fileName"></param>
