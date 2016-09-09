@@ -676,18 +676,22 @@ Namespace SnippetTools
                     Next
                 End If
 
-                Select Case doc...<Code>.@Kind.ToLower
-                    Case = "file"
-                        snippet.Kind = CodeSnippetKinds.File
-                    Case = "method body"
-                        snippet.Kind = CodeSnippetKinds.MethodBody
-                    Case = "method decl"
-                        snippet.Kind = CodeSnippetKinds.MethodDeclaration
-                    Case = "type decl"
-                        snippet.Kind = CodeSnippetKinds.TypeDeclaration
-                    Case Else
-                        snippet.Kind = CodeSnippetKinds.Any
-                End Select
+                Try
+                    Select Case doc...<Code>.@Kind.ToLower
+                        Case = "file"
+                            snippet.Kind = CodeSnippetKinds.File
+                        Case = "method body"
+                            snippet.Kind = CodeSnippetKinds.MethodBody
+                        Case = "method decl"
+                            snippet.Kind = CodeSnippetKinds.MethodDeclaration
+                        Case = "type decl"
+                            snippet.Kind = CodeSnippetKinds.TypeDeclaration
+                        Case Else
+                            snippet.Kind = CodeSnippetKinds.Any
+                    End Select
+                Catch ex As Exception
+                    snippet.Kind = CodeSnippetKinds.Any
+                End Try
 
                 For Each decl In snippet.Declarations
                     snippet.Code = snippet.Code.Replace($"{doc...<Code>.@Delimiter}{decl.ID}{doc...<Code>.@Delimiter}", decl.Default)
