@@ -1,0 +1,6 @@
+C:\Users\proga\AppData\Local\Microsoft\VisualStudio\14.0Roslyn\Extensions\Alessandro Del Sole\DelSole.VSIX Roslyn Analysis\1.0.2\\DelSole_VSIX_Analysis.dll
+C:\Users\proga\AppData\Local\Microsoft\VisualStudio\14.0Roslyn\Extensions\Alessandro Del Sole\DelSole.VSIX Roslyn Analysis\1.0.2\\extension.vsixmanifest
+C:\Users\proga\AppData\Local\Microsoft\VisualStudio\14.0Roslyn\Extensions\Alessandro Del Sole\DelSole.VSIX Roslyn Analysis\1.0.2\\Diagnostic.nuspec
+C:\Users\proga\AppData\Local\Microsoft\VisualStudio\14.0Roslyn\Extensions\Alessandro Del Sole\DelSole.VSIX Roslyn Analysis\1.0.2\\tools\install.ps1
+C:\Users\proga\AppData\Local\Microsoft\VisualStudio\14.0Roslyn\Extensions\Alessandro Del Sole\DelSole.VSIX Roslyn Analysis\1.0.2\\tools\uninstall.ps1
+C:\Users\proga\AppData\Local\Microsoft\VisualStudio\14.0Roslyn\Extensions\Alessandro Del Sole\DelSole.VSIX Roslyn Analysis\1.0.2\\DelSole_VSIX_Analysis.pdb

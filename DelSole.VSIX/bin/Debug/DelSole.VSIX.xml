@@ -1,0 +1,886 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+DelSole.VSIX
+</name>
+</assembly>
+<members>
+<member name="T:DelSole.VSIX.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:DelSole.VSIX.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:DelSole.VSIX.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.SnippetFolder.FolderName">
+ <summary>
+ The full directory name
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.SnippetFolder.SnippetFiles">
+ <summary>
+ Return the list of snippet file names in the current folder
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.SnippetLibrary.Folders">
+ <summary>
+ Return the collection of folders in the library
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.SnippetLibrary.SnippetFiles">
+ <summary>
+ Return the full list of code snippets inside the library. 
+ </summary>
+ <returns></returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.SnippetLibrary.SaveLibrary(System.String)">
+ <summary>
+ Save a library of folders containing code snippets
+ </summary>
+ <param name="pathName"></param>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.SnippetLibrary.LoadLibrary(System.String)">
+ <summary>
+ Load a snippet library list from disk. Make sure you load a list that was previously saved with the <seealso cref="M:DelSole.VSIX.SnippetTools.SnippetLibrary.SaveLibrary(System.String)"/> method.
+ </summary>
+ <param name="pathName"></param>
+ <remarks>If a folder in the library is not found on disk, then it's not added to the snippet library</remarks>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.SnippetLibrary.BackupLibraryToZip(System.String)">
+ <summary>
+ Create a zip backup archive containing all the code snippet files in the library, maintaining the directory tree
+ </summary>
+ <param name="zipName"></param>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.CodeSnippet">
+ <summary>
+ Represent a code snippet and expose APIs to create and save a code snippet file. 
+ It differs from <seealso cref="T:DelSole.VSIX.SnippetInfo"/> which instead serves as a building block for generating .Vsix packages
+ </summary>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Diagnostics">
+ <summary>
+ Return a collection of Roslyn diagnostics for the current code snippet
+ </summary>
+ <returns></returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.AnalyzeCode">
+ <summary>
+ Perform Roslyn live analysis over the snippet's code (VB and C# only).
+ The analysis result is assigned to the <seealso cref="P:DelSole.VSIX.SnippetTools.CodeSnippet.Diagnostics"/> property
+ </summary>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Author">
+ <summary>
+ The code snippet author
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Title">
+ <summary>
+ The code snippet title
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Description">
+ <summary>
+ The code snippet description
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.HelpUrl">
+ <summary>
+ An optional URL that users can search for more information
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Shortcut">
+ <summary>
+ A keyboard shortcut that users can use to insert the code snippet quickly
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Keywords">
+ <summary>
+ A comma-separated list of words that help categorize a code snippet
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Kind">
+ <summary>
+ Represent the kind of code snippet
+ </summary>
+ <returns><seealso cref="T:DelSole.VSIX.SnippetTools.CodeSnippetKinds"/></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Namespaces">
+ <summary>
+ VB Only: a list of namespaces that are required for the code snippet to work, without the Imports keyword
+ </summary>
+ <returns><seealso cref="T:DelSole.VSIX.SnippetTools.Imports"/></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.References">
+ <summary>
+ VB only: a list of assembly references that are required for the code snippet to work
+ </summary>
+ <returns><seealso cref="P:DelSole.VSIX.SnippetTools.CodeSnippet.References"/></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Declarations">
+ <summary>
+ The list of identifiers/words and related suggestions the IntelliSense shows 
+ </summary>
+ <returns><seealso cref="P:DelSole.VSIX.SnippetTools.CodeSnippet.Declarations"/></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Code">
+ <summary>
+ The actual source code of the snippet
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Language">
+ <summary>
+ The programming language the code snippet is written with.
+ Supported values are: VB, CSHARP, SQL, XML, CPP, HTML, JAVASCRIPT
+ </summary>
+ <returns></returns>
+</member>
+<member name="F:DelSole.VSIX.SnippetTools.CodeSnippet.validationErrors">
+ <summary>
+ Holds a collection of validation errors
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.AddError(System.String,System.String)">
+ <summary>
+ Add a validation error to the collection of validation errors
+ passing the property name and the error message
+ </summary>
+ <param name="columnName"></param>
+ <param name="msg"></param>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.RemoveError(System.String)">
+ <summary>
+ Remove a validation error from the collection
+ </summary>
+ <param name="columnName"></param>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.HasErrors">
+ <summary>
+ Return True if the current instance has validation errors
+ </summary>
+ <returns>Boolean</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Error">
+ <summary>
+ Return an error message
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.CodeSnippet.Item(System.String)">
+ <summary>
+ Default property for the specified property name
+ </summary>
+ <param name="columnName"></param>
+ <returns>String</returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.CheckValue(System.String)">
+ <summary>
+ Check for required values and add/removes
+ validation errors
+ </summary>
+ <param name="value"></param>
+</member>
+<member name="F:DelSole.VSIX.SnippetTools.CodeSnippet.supportedLanguages">
+ <summary>
+ An array representing the supported programming languages
+ </summary>
+</member>
+<member name="E:DelSole.VSIX.SnippetTools.CodeSnippet.PropertyChanged">
+ <summary>
+ Raised when the value of a property changes.
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.#ctor">
+ <summary>
+ Type initialization
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.ReturnSnippetKind(DelSole.VSIX.SnippetTools.CodeSnippetKinds)">
+ <summary>
+ Return a schema-compliant string representing the code snippet kind
+ </summary>
+ <param name="kind"></param>
+ <returns>String</returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.SaveVisualStudioSnippet(System.String)">
+ <summary>
+ Create and save a code snippet file to disk
+ </summary>
+ <param name="fileName">The target snippet file name</param>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.ImportCodeFile(System.String)">
+ <summary>
+ Create a new <seealso cref="T:DelSole.VSIX.SnippetTools.CodeSnippet"/> from a code file
+ </summary>
+ <param name="fileName">Must be a .vb, .cs, .sql, .xml, .xaml, .cpp, or .js file</param>
+ <returns></returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.LoadSnippet(System.String)">
+ <summary>
+ Load a code snippet from disk and return an instance of <seealso cref="T:DelSole.VSIX.SnippetTools.CodeSnippet"/>
+ </summary>
+ <param name="fileName"></param>
+ <returns><seealso cref="T:DelSole.VSIX.SnippetTools.CodeSnippet"/></returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.SaveVSCodeSnippet(System.String)">
+ <summary>
+ Save a code snippet for Visual Studio Code
+ </summary>
+ <param name="fileName"></param>
+</member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.SaveSnippet(System.String,DelSole.VSIX.SnippetTools.IDEType)">
+ <summary>
+ Create and save a code snippet file to disk
+ </summary>
+ <param name="fileName">The target snippet file name</param>
+ <param name="ideType">A value from <seealso cref="T:DelSole.VSIX.SnippetTools.IDEType"/> that determines if the snippet must target Visual Studio or Code</param>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.CodeSnippetKinds">
+ <summary>
+ Enumerate the code snippet kinds. 
+ Kind means the code snippet can be a method body, 
+ a method declaration, a type declaration, an entire source file,
+ or any other kind
+ </summary>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.Declaration">
+ <summary>
+ Represent a code replacement. Replacements are highlighted in the code editor and the user can
+ follow the suggestions offered by IntelliSense
+ </summary>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.Declaration.ID">
+ <summary>
+ The replacement ID
+ </summary>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.Declaration.Type">
+ <summary>
+ The .NET type of the object 
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.Declaration.ToolTip">
+ <summary>
+ A description explaining how the user can replace the code
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.Declaration.Default">
+ <summary>
+ The default value for the replacement
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.Declaration.Function">
+ <summary>
+ A method that will be invoked when the snippet is inserted
+ </summary>
+ <returns></returns>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.Declarations">
+ <summary>
+ A collection of <seealso cref="T:DelSole.VSIX.SnippetTools.Declaration"/> objects
+ </summary>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.Import">
+ <summary>
+ Represent an Imports directive (VB only). 
+ The XML schema for code snippets does not support C# using
+ </summary>
+</member>
+<member name="P:DelSole.VSIX.SnippetTools.Import.ImportDirective">
+ <summary>
+ The namespace without the Imports keyword (e.g. System.Diagnostics)
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.Imports">
+ <summary>
+ A collection of <seealso cref="T:DelSole.VSIX.SnippetTools.Import"/> directives/>
+ </summary>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.Reference">
+ <summary>
+ Represent a reference to a .NET assembly (VB Only).
+ The XML schema for code snippets does not support C# references
+ </summary>
+</member>
+<member name="T:DelSole.VSIX.SnippetTools.References">
+ <summary>
+ A collection of <seealso cref="T:DelSole.VSIX.SnippetTools.Reference"/> objects
+ </summary>
+</member>
+<member name="T:DelSole.VSIX.SnippetInfo">
+ <summary>
+ Structured representation of a code snippet file with full-fidelity
+ </summary>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.SnippetFileName">
+ <summary>
+ A code snippet's file name
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.SnippetLanguage">
+ <summary>
+ The programming language the snippet targets
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.SnippetPath">
+ <summary>
+ The snippet's path on disk
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.SnippetDescription">
+ <summary>
+ The snippet's description
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.SnippetPathName">
+ <summary>
+ Return the full pathname for a code snippet, combining the values of <seealso cref="P:DelSole.VSIX.SnippetInfo.SnippetPath"/> and <seealso cref="P:DelSole.VSIX.SnippetInfo.SnippetFileName"/> properties
+ </summary>
+ <returns></returns>
+</member>
+<member name="F:DelSole.VSIX.SnippetInfo.validationErrors">
+ <summary>
+ Holds a collection of validation errors
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.SnippetInfo.AddError(System.String,System.String)">
+ <summary>
+ Add a validation error to the collection of validation errors
+ passing the property name and the error message
+ </summary>
+ <param name="columnName"></param>
+ <param name="msg"></param>
+</member>
+<member name="M:DelSole.VSIX.SnippetInfo.RemoveError(System.String)">
+ <summary>
+ Remove a validation error from the collection
+ </summary>
+ <param name="columnName"></param>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.HasErrors">
+ <summary>
+ Return True if the current instance has validation errors
+ </summary>
+ <returns>Boolean</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.Error">
+ <summary>
+ Return an error message
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.SnippetInfo.Item(System.String)">
+ <summary>
+ Default property for the specified property name
+ </summary>
+ <param name="columnName"></param>
+ <returns>String</returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetInfo.CheckValue(System.String)">
+ <summary>
+ Check for required values and add/removes
+ validation errors
+ </summary>
+ <param name="value"></param>
+</member>
+<member name="M:DelSole.VSIX.SnippetInfo.GetSnippetLanguage(System.String)">
+ <summary>
+ Detect the target programming language
+ for the specified snippet file
+ </summary>
+ <param name="snippetFile"></param>
+ <returns></returns>
+</member>
+<member name="M:DelSole.VSIX.SnippetInfo.GetSnippetDescription(System.String)">
+ <summary>
+ Detect the description for the specified snippet file. If the operation fails, return the "Description unavailable" message
+ </summary>
+ <remarks>Note: invoking GetSnippetDescription might fail if the code snippet schema is based on v 1.0</remarks>
+ <param name="snippetFile"></param>
+ <returns></returns>
+</member>
+<member name="E:DelSole.VSIX.SnippetInfo.PropertyChanged">
+ <summary>
+ Notify callers for changes
+ </summary>
+ <param name="sender"></param>
+ <param name="e"></param>
+</member>
+<member name="M:DelSole.VSIX.SnippetInfo.OnPropertyChanged(System.String)">
+ <summary>
+ Raise the PropertyChanged event when instance data changes
+ </summary>
+ <param name="name"></param>
+</member>
+<member name="T:DelSole.VSIX.SnippetInfoCollection">
+ <summary>
+ A collection of <seealso cref="T:DelSole.VSIX.SnippetInfo"></seealso> objects/>
+ </summary>
+</member>
+<member name="T:DelSole.VSIX.VsiTools.VsiService">
+ <summary>
+ Provide APIs to work with old-style .vsi packages (VS 2005, 2008, 2010)
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.VsiTools.VsiService.Vsi2Vsix(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+ <summary>
+ Convert an obsolete VSI package into a VSIX package. The source VSI package must contain only code snippets
+ </summary>
+ <param name="vsiFileName">The source .vsi pathname</param>
+ <param name="vsixFileName">The target .vsix pathname</param>
+ <param name="snippetFolderName">The folder name that appears inside IntelliSense</param>
+ <param name="packageAuthor">The Vsix author</param>
+ <param name="packageName">The Vsix product name</param>
+ <param name="packageDescription">The Vsix description</param>
+ <param name="iconPath">The icon for the Vsix in the VS Gallery</param>
+ <param name="imagePath">The preview image for the Vsix in the VS Gallery</param>
+ <param name="moreInfoUrl">The URL string for More Info</param>
+</member>
+<member name="M:DelSole.VSIX.VsiTools.VsiService.Vsi2Vsix(System.String,System.String,DelSole.VSIX.VsixPackage)">
+ <summary>
+ Convert an obsolete VSI package into a VSIX package. The source VSI package must contain only code snippets
+ </summary>
+ <param name="vsiFileName">File name of the source .vsi archive</param>
+ <param name="vsixFileName">File name of the destination .vsix package</param>
+ <param name="package">An instance of <seealso cref="T:DelSole.VSIX.VsixPackage"/> with metadata already populated</param>
+</member>
+<member name="M:DelSole.VSIX.VsiTools.VsiService.FixSnippetTerminatorAndEncoding(System.String)">
+ <summary>
+ Fix very old .snippet files that might miss the utf-8 encoding specification
+ and that might have an EOF terminator that can't be used with .NET
+ </summary>
+ <param name="snippetFileName"></param>
+</member>
+<member name="M:DelSole.VSIX.VsiTools.VsiService.ExtractVsi(System.String,System.String,System.Boolean)">
+ <summary>
+ Extract the content of the specified .vsi package into the specified folder
+ </summary>
+ <param name="fileName"></param>
+ <param name="targetDirectory"></param>
+ <param name="extractOnlySnippets">If true, extracts only the code snippet files otherwise the whole archive content</param>
+</member>
+<member name="T:DelSole.VSIX.VsixPackage">
+ <summary>
+ Represent a VSIX package with its contents and metadata,
+ and provides methods for VSIX generation
+ </summary>
+</member>
+<member name="E:DelSole.VSIX.VsixPackage.PropertyChanged">
+ <summary>
+ Notify callers for changes
+ </summary>
+ <param name="sender"></param>
+ <param name="e"></param>
+</member>
+<member name="E:DelSole.VSIX.VsixPackage.VsixGenerationStarted">
+ <summary>
+ Raised when the Vsix generation process starts
+ </summary>
+</member>
+<member name="E:DelSole.VSIX.VsixPackage.VsixGenerationCompleted">
+ <summary>
+ Raised right after the Vsix generation process completes
+ </summary>
+</member>
+<member name="E:DelSole.VSIX.VsixPackage.ManifestGenerationCompleted">
+ <summary>
+ Raised when the <seealso cref="M:DelSole.VSIX.VsixPackage.GenerateVsixManifest(System.String)"/> completes generating the VSIX manifest file
+ </summary>
+</member>
+<member name="E:DelSole.VSIX.VsixPackage.FileAddedToPackage">
+ <summary>
+ Raised when a file is packaged into the Vsix archive
+ </summary>
+ <param name="sender"></param>
+ <param name="e"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.OnPropertyChanged(System.String)">
+ <summary>
+ Raise the PropertyChanged event when instance data changes
+ </summary>
+ <param name="name"></param>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.ProductName">
+ <summary>
+ The name of the VSIX package. 
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.SnippetFolderName">
+ <summary>
+ The folder that contains the .snippet files
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.PackageDescription">
+ <summary>
+ The VSIX package description. This will
+ also be shown in the VS Gallery
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.PackageVersion">
+ <summary>
+ The VSIX package version number
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.PackageAuthor">
+ <summary>
+ The VSIX package's author name
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.CodeSnippets">
+ <summary>
+ The collection of code snippets that will be
+ packaged into the VSIX. Each code snippet is 
+ represented by an object of type SnippetInfo
+ </summary>
+ <returns>SnippetInfoCollection</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.License">
+ <summary>
+ The license agreement an user must accept to install the VSIX package.
+ This must be the pathname of a .txt or .rtf file
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.IconPath">
+ <summary>
+ The pathname of an icon file for the VSIX package.
+ Supported formats are .ico, .jpg, .png, .tif/.tiff, .bmp
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.PreviewImagePath">
+ <summary>
+ The pathname of an image file to be used as a preview.
+ Supported formats are .ico, .jpg, .png, .tif/.tiff, .bmp
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.ReleaseNotes">
+ <summary>
+ The pathname of a file containing release notes for the VSIX package. 
+ Supported formats: .html/.htm, .txt, .rtf
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.MoreInfoURL">
+ <summary>
+ A Web address where users can find additional info
+ about the generated VSIX package
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.GettingStartedGuide">
+ <summary>
+ A Web address where users can find a guide to get
+ started with the contents of the VSIX package
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.Tags">
+ <summary>
+ A comma-separated list of tags for categorizing
+ the contents of the VSIX package
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.RequiresAdminElevation">
+ <summary>
+ Gets or sets whether the VSIX package requires
+ administrator privileges to be installed
+ </summary>
+ <returns>Boolean</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.RequiresWindowsInstaller">
+ <summary>
+ Gets or sets whether the VSIX package will be
+ installed via the VSIX engine or via Windows Installer
+ </summary>
+ <returns>Boolean</returns>
+ <remarks>Assign false if the VSIX package only contains code snippets</remarks>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.PackageGuid">
+ <summary>
+ Get a unique identifier for the VSIX package
+ </summary>
+ <returns>Guid</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.Dependencies">
+ <summary>
+ Return the list of dependencies for the VSIX package
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.Assets">
+ <summary>
+ Return the list of assets for the VSIX package
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.Targets">
+ <summary>
+ Return the list of supported Visual Studio editions
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.PackageID">
+ <summary>
+ Get or Set the VSIX package ID
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.PkgDefName">
+ <summary>
+ Return the package definition file name (.pkgdef)
+ </summary>
+ <returns></returns>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.TestLanguageGroup">
+ <summary>
+ Return True if code snippets target more than one programming language
+ </summary>
+ <returns></returns>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.OpenVsix(System.String)">
+ <summary>
+ Open an existing .vsix package and return an instance of the VSIXPackage class
+ with all the related information
+ </summary>
+ <param name="fileName"></param>
+ <returns>VSIXPackage</returns>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.ExtractVsix(System.String,System.String,System.Boolean)">
+ <summary>
+ Extract the content of the specified VSIX package into the specified folder
+ </summary>
+ <param name="fileName"></param>
+ <param name="targetDirectory"></param>
+ <param name="extractOnlySnippets">If true, extracts only the code snippet files otherwise the whole archive content</param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.GetTempFolder">
+ <summary>
+ Create a temporary folder to handle package-required files.
+ If the folder already exists, it is first deleted
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.GetTempFolder(System.String)">
+ <summary>
+ Create a temporary folder to handle package-required files.
+ If the folder already exists, it is first deleted
+ </summary>
+ <param name="tempFolderName">Append a subfolder with the specified name</param>
+ <returns></returns>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.CopySnippets(System.String)">
+ <summary>
+ Copy all snippet files to the temporary folder
+ so that they will be easily packaged into the VSIX
+ </summary>
+ <param name="tempFolder"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.GeneratePkgDefToTempFolder">
+ <summary>
+ Generate the .Pkgdef file into the Temporary folder
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.GenerateVsixManifest(System.String)">
+ <summary>
+ Generate the VSIX Manifest (extension.vsixmanifest file)
+ Invoked internally by the <seealso cref="M:DelSole.VSIX.VsixPackage.Build(System.String,DelSole.VSIX.SnippetTools.IDEType)"/> method
+ </summary>
+ <param name="targetFolder"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.BuildClassicVsix(System.String)">
+ <summary>
+ Generate a .vsix package for Visual Studio 2015
+ </summary>
+ <param name="fileName"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.BuildVsCodeVsix(System.String)">
+ <summary>
+ Generate a .vsix package that targets Visual Studio Code
+ </summary>
+ <param name="pathOfJsonSnippets"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.Build(System.String,DelSole.VSIX.SnippetTools.IDEType)">
+ <summary>
+ Build a VSIX package that contains the code snippets hold by the <seealso cref="P:DelSole.VSIX.VsixPackage.CodeSnippets"/> property. Properties representing the package manifest must be populated before invoking this method.
+ </summary>
+ <param name="name">Represents the target .vsix file name if targetIDE is VisualStudio or the folder name that contains .json snippets if targetIDE is Code</param>
+ <param name="targetIDE">The target IDE for the .vsix package (Visual Studio 2015 or Visual Studio Code)</param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.Zip(System.String,System.String)">
+ <summary>
+ Create a Zip file according to the Open Packaging Conventions, that is what the VSIX format relies on
+ </summary>
+ <param name="zipFileName"></param>
+ <param name="startFolder"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.PopulateFromSnippetLibrary(DelSole.VSIX.SnippetTools.SnippetLibrary)">
+ <summary>
+ Populate the <seealso cref="P:DelSole.VSIX.VsixPackage.CodeSnippets"/> property with code snippets in the 
+ specified <seealso cref="T:DelSole.VSIX.SnippetTools.SnippetLibrary"/>
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.PopulateFromSnippetLibrary(DelSole.VSIX.SnippetTools.SnippetLibrary,DelSole.VSIX.SnippetTools.SnippetFolder)">
+ <summary>
+ Populate the <seealso cref="P:DelSole.VSIX.VsixPackage.CodeSnippets"/> property with code snippets in the 
+ specified <seealso cref="T:DelSole.VSIX.SnippetTools.SnippetLibrary"/>
+ </summary>
+</member>
+<member name="F:DelSole.VSIX.VsixPackage.validationErrors">
+ <summary>
+ Holds a collection of validation errors
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.AddError(System.String,System.String)">
+ <summary>
+ Add a validation error to the collection of validation errors
+ passing the property name and the error message
+ </summary>
+ <param name="columnName"></param>
+ <param name="msg"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.RemoveError(System.String)">
+ <summary>
+ Remove a validation error from the collection
+ </summary>
+ <param name="columnName"></param>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.HasErrors">
+ <summary>
+ Return True if the current instance has validation errors
+ </summary>
+ <returns>Boolean</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.Error">
+ <summary>
+ Return an error message
+ </summary>
+ <returns>String</returns>
+</member>
+<member name="P:DelSole.VSIX.VsixPackage.Item(System.String)">
+ <summary>
+ Default property for the specified property name
+ </summary>
+ <param name="columnName"></param>
+ <returns>String</returns>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.CheckValue(System.String)">
+ <summary>
+ Check for required values and add/removes
+ validation errors
+ </summary>
+ <param name="value"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.#ctor">
+ <summary>
+ Create an instance of the class, supplying default values
+ for every property
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.SignVsix(System.String,System.String,System.Security.SecureString)">
+ <summary>
+ Sign a VSIX package with a digital signature. This must be a .pfx password-protected file
+ </summary>
+ <param name="vsixPackageName"></param>
+ <param name="pfxFileName"></param>
+ <param name="pfxPassword"></param>
+</member>
+<member name="M:DelSole.VSIX.VsixPackage.SignVsix(System.String,System.String,System.String)">
+ <summary>
+ Sign a VSIX package with a digital signature. This must be a .pfx password-protected file
+ </summary>
+ <param name="vsixPackageName"></param>
+ <param name="pfxFileName"></param>
+ <param name="pfxPassword"></param>
+</member>
+<member name="T:DelSole.VSIX.Compression">
+ <summary>
+ Provides support for zip file compression
+ </summary>
+</member>
+<member name="M:DelSole.VSIX.Compression.getContentType(System.String)">
+ <summary>
+ Return the proper MIME type for the specified file name
+ </summary>
+ <param name="fileName"></param>
+ <returns>String</returns>
+</member>
+<member name="M:DelSole.VSIX.Compression.AddFileToZip(System.IO.Packaging.Package,System.String,System.String)">
+ <summary>
+ Add the specified file to a zip archive
+ </summary>
+ <param name="zip">A System.IO.Package zip</param>
+ <param name="fileToAdd">the file name to add</param>
+ <param name="directoryFile">the target folder</param>
+ <returns>Boolean</returns>
+</member>
+<member name="M:DelSole.VSIX.Compression.AddFileToZip(System.String,System.String,System.String)">
+ <summary>
+ Add the specified file to a zip archive
+ </summary>
+ <param name="zipFileName">The target zip archive's name</param>
+ <param name="fileToAdd">the file name to add</param>
+ <param name="directoryFile">the target folder</param>
+ <returns>Boolean</returns>
+</member>
+<member name="M:DelSole.VSIX.Compression.AddFileToZip(System.String,System.String)">
+ <summary>
+ Add the specified file to a zip archive
+ </summary>
+ <param name="zipFileName">The target zip archive's name</param>
+ <param name="fileToAdd">the file name to add</param>
+ <returns>Boolean</returns>
+</member>
+<member name="M:DelSole.VSIX.Compression.AddFileToZip(System.IO.Packaging.Package,System.String)">
+ <summary>
+ Add the specified file to a zip archive
+ </summary>
+ <param name="zip">The target System.IO.Package zip archive</param>
+ <param name="fileToAdd">the file name to add</param>
+ <returns>Boolean</returns>
+</member>
+<member name="M:DelSole.VSIX.Compression.CopyStream(System.IO.FileStream,System.IO.Stream)">
+ <summary>
+ Copy a stream into another
+ </summary>
+ <param name="inputStream"></param>
+ <param name="outputStream"></param>
+</member>
+</members>
+</doc>

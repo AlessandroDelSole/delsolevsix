@@ -1,0 +1,9 @@
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\Diagnostic.nuspec
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\tools\install.ps1
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\tools\uninstall.ps1
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\DelSole_VSIX_Analysis.dll
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\DelSole_VSIX_Analysis.pdb
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.Resources.resources
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.vbproj.GenerateResource.Cache
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.dll
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.pdb

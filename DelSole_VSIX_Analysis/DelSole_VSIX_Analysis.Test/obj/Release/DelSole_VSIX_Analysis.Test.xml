@@ -1,0 +1,250 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+DelSole_VSIX_Analysis.Test
+</name>
+</assembly>
+<members>
+<member name="T:DelSole_VSIX_Analysis.Test.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:DelSole_VSIX_Analysis.Test.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:DelSole_VSIX_Analysis.Test.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="T:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier">
+ <summary>
+ Superclass of all Unit tests made for diagnostics with codefixes.
+ Contains methods used to verify correctness of codefixes
+ </summary>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.ApplyFix(Microsoft.CodeAnalysis.Document,Microsoft.CodeAnalysis.CodeActions.CodeAction)">
+ <summary>
+ Apply the inputted CodeAction to the inputted document.
+ Meant to be used to apply codefixes.
+ </summary>
+ <param name="document">The Document to apply the fix on</param>
+ <param name="codeAction">A CodeAction that will be applied to the Document.</param>
+ <returns>A Document with the changes from the CodeAction</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.GetNewDiagnostics(System.Collections.Generic.IEnumerable{Microsoft.CodeAnalysis.Diagnostic},System.Collections.Generic.IEnumerable{Microsoft.CodeAnalysis.Diagnostic})">
+ <summary>
+ Compare two collections of Diagnostics, and return a list of any New diagnostics that appear only in the second collection.
+ Note: Considers Diagnostics to be the same if they have the same Ids.  In the case of multiple diagnostics With the same Id In a row,
+ this method may not necessarily return the new one.
+ </summary>
+ <param name="diagnostics">The Diagnostics that existed in the code before the CodeFix was applied</param>
+ <param name="newDiagnostics">The Diagnostics that exist in the code after the CodeFix was applied</param>
+ <returns>A list of Diagnostics that only surfaced in the code after the CodeFix was applied</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.GetCompilerDiagnostics(Microsoft.CodeAnalysis.Document)">
+ <summary>
+ Get the existing compiler diagnostics on the inputted document.
+ </summary>
+ <param name="document">The Document to run the compiler diagnostic analyzers on</param>
+ <returns>The compiler diagnostics that were found in the code</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.GetStringFromDocument(Microsoft.CodeAnalysis.Document)">
+ <summary>
+ Given a Document, turn it into a string based on the syntax root
+ </summary>
+ <param name="document">The Document to be converted to a string</param>
+ <returns>A string containing the syntax of the Document after formatting</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.GetCSharpCodeFixProvider">
+ <summary>
+ Returns the codefix being tested (C#) - to be implemented in non-abstract class
+ </summary>
+ <returns>The CodeFixProvider to be used for CSharp code</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.GetBasicCodeFixProvider">
+ <summary>
+ Returns the codefix being tested (VB) - to be implemented in non-abstract class
+ </summary>
+ <returns>The CodeFixProvider to be used for VisualBasic code</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.VerifyCSharpFix(System.String,System.String,System.Nullable{System.Int32},System.Boolean)">
+ <summary>
+ Called to test a C# codefix when applied on the inputted string as a source
+ </summary>
+ <param name="oldSource">A class in the form of a string before the CodeFix was applied to it</param>
+ <param name="newSource">A class in the form of a string after the CodeFix was applied to it</param>
+ <param name="codeFixIndex">Index determining which codefix to apply if there are multiple</param>
+ <param name="allowNewCompilerDiagnostics">A bool controlling whether Or Not the test will fail if the CodeFix introduces other warnings after being applied</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.VerifyBasicFix(System.String,System.String,System.Nullable{System.Int32},System.Boolean)">
+ <summary>
+ Called to test a VB codefix when applied on the inputted string as a source
+ </summary>
+ <param name="oldSource">A class in the form of a string before the CodeFix was applied to it</param>
+ <param name="newSource">A class in the form of a string after the CodeFix was applied to it</param>
+ <param name="codeFixIndex">Index determining which codefix to apply if there are multiple</param>
+ <param name="allowNewCompilerDiagnostics">A bool controlling whether Or Not the test will fail if the CodeFix introduces other warnings after being applied</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.CodeFixVerifier.VerifyFix(System.String,Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer,Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider,System.String,System.String,System.Nullable{System.Int32},System.Boolean)">
+ <summary>
+ General verifier for codefixes.
+ Creates a Document from the source string, then gets diagnostics on it And applies the relevant codefixes.
+ Then gets the string after the codefix Is applied And compares it with the expected result.
+ Note: If any codefix causes New diagnostics To show up, the test fails unless allowNewCompilerDiagnostics Is Set To True.
+ </summary>
+ <param name="language">The language the source code Is in</param>
+ <param name="analyzer">The analyzer to be applied to the source code</param>
+ <param name="codeFixProvider">The codefix to be applied to the code wherever the relevant Diagnostic Is found</param>
+ <param name="oldSource">A class in the form of a string before the CodeFix was applied to it</param>
+ <param name="newSource">A class in the form of a string after the CodeFix was applied to it</param>
+ <param name="codeFixIndex">Index determining which codefix to apply if there are multiple</param>
+ <param name="allowNewCompilerDiagnostics">A bool controlling whether Or Not the test will fail if the CodeFix introduces other warnings after being applied</param>
+</member>
+<member name="T:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResultLocation">
+ <summary>
+ Location where the diagnostic appears, as determined by path, line number, And column number.
+ </summary>
+</member>
+<member name="T:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResult">
+ <summary>
+ Struct that stores information about a Diagnostic appearing in a source
+ </summary>
+</member>
+<member name="T:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier">
+ <summary> Superclass of all Unit Tests for DiagnosticAnalyzers. </summary>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.GetSortedDiagnostics(System.String[],System.String,Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer)">
+ <summary>
+ Given classes in the form of strings, their language, And an IDiagnosticAnlayzer to apply to it, return the diagnostics found in the string after converting it to a document.
+ </summary>
+ <param name="sources">Classes in the form of strings</param>
+ <param name="language">The language the source classes are in</param>
+ <param name="analyzer">The analyzer to be run on the sources</param>
+ <returns>An IEnumerable of Diagnostics that surfaced in the source code, sorted by Location</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.GetSortedDiagnosticsFromDocuments(Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer,Microsoft.CodeAnalysis.Document[])">
+ <summary>
+ Given an analyzer And a document to apply it to, run the analyzer And gather an array of diagnostics found in it.
+ The returned diagnostics are then ordered by location in the source document.
+ </summary>
+ <param name="analyzer">The analyzer to run on the documents</param>
+ <param name="documents">The Documents that the analyzer will be run on</param>
+ <returns>An IEnumerable of Diagnostics that surfaced in the source code, sorted by Location</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.SortDiagnostics(System.Collections.Generic.IEnumerable{Microsoft.CodeAnalysis.Diagnostic})">
+ <summary>
+ Sort diagnostics by location in source document
+ </summary>
+ <param name="diagnostics">The list of Diagnostics to be sorted</param>
+ <returns>An IEnumerable containing the Diagnostics in order of Location</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.GetDocuments(System.String[],System.String)">
+ <summary>
+ Given an array of strings as sources And a language, turn them into a project And return the documents And spans of it.
+ </summary>
+ <param name="sources">Classes in the form of strings</param>
+ <param name="language">The language the source code is in</param>
+ <returns>An array of Documents produced from the source strings</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.CreateDocument(System.String,System.String)">
+ <summary>
+ Create a Document from a string through creating a project that contains it.
+ </summary>
+ <param name="source">Classes in the form of a string</param>
+ <param name="language">The language the source code Is in</param>
+ <returns>A Document created from the source string</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.CreateProject(System.String[],System.String)">
+ <summary>
+ Create a project using the inputted strings as sources.
+ </summary>
+ <param name="sources">Classes in the form of strings</param>
+ <param name="language">The language the source code is in</param>
+ <returns>A Project created out of the Douments created from the source strings</returns>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.GetCSharpDiagnosticAnalyzer">
+ <summary>
+ Get the CSharp analyzer being tested - to be implemented in non-abstract class
+ </summary>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.GetBasicDiagnosticAnalyzer">
+ <summary>
+ Get the Visual Basic analyzer being tested (C#) - to be implemented in non-abstract class
+ </summary>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.VerifyCSharpDiagnostic(System.String,DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResult[])">
+ <summary>
+ Called to test a C# DiagnosticAnalyzer when applied on the single inputted string as a source
+ Note: input a DiagnosticResult For Each Diagnostic expected
+ </summary>
+ <param name="source">A class in the form of a string to run the analyzer on</param>
+ <param name="expected"> DiagnosticResults that should appear after the analyzer Is run on the source</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.VerifyBasicDiagnostic(System.String,DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResult[])">
+ <summary>
+ Called to test a VB DiagnosticAnalyzer when applied on the single inputted string as a source
+ Note: input a DiagnosticResult For Each Diagnostic expected
+ </summary>
+ <param name="source">A class in the form of a string to run the analyzer on</param>
+ <param name="expected">DiagnosticResults that should appear after the analyzer Is run on the source</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.VerifyCSharpDiagnostic(System.String[],DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResult[])">
+ <summary>
+ Called to test a C# DiagnosticAnalyzer when applied on the inputted strings as a source
+ Note: input a DiagnosticResult For Each Diagnostic expected
+ </summary>
+ <param name="sources">An array of strings to create source documents from to run the analyzers on</param>
+ <param name="expected">DiagnosticResults that should appear after the analyzer Is run on the sources</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.VerifyBasicDiagnostic(System.String[],DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResult[])">
+ <summary>
+ Called to test a VB DiagnosticAnalyzer when applied on the inputted strings as a source
+ Note: input a DiagnosticResult For Each Diagnostic expected
+ </summary>
+ <param name="sources">An array of strings to create source documents from to run the analyzers on</param>
+ <param name="expected">DiagnosticResults that should appear after the analyzer Is run on the sources</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.VerifyDiagnostics(System.String[],System.String,Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer,DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResult[])">
+ <summary>
+ General method that gets a collection of actual diagnostics found in the source after the analyzer Is run, 
+ then verifies each of them.
+ </summary>
+ <param name="sources">An array of strings to create source documents from to run the analyzers on</param>
+ <param name="language">The language of the classes represented by the source strings</param>
+ <param name="analyzer">The analyzer to be run on the source code</param>
+ <param name="expected">DiagnosticResults that should appear after the analyzer Is run on the sources</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.VerifyDiagnosticResults(System.Collections.Generic.IEnumerable{Microsoft.CodeAnalysis.Diagnostic},Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer,DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResult[])">
+ <summary>
+ Checks each of the actual Diagnostics found And compares them with the corresponding DiagnosticResult in the array of expected results.
+ Diagnostics are considered equal only if the DiagnosticResultLocation, Id, Severity, And Message of the DiagnosticResult match the actual diagnostic.
+ </summary>
+ <param name="actualResults">The Diagnostics found by the compiler after running the analyzer on the source code</param>
+ <param name="analyzer">The analyzer that was being run on the sources</param>
+ <param name="expectedResults">Diagnostic Results that should have appeared in the code</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.VerifyDiagnosticLocation(Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer,Microsoft.CodeAnalysis.Diagnostic,Microsoft.CodeAnalysis.Location,DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticResultLocation)">
+ <summary>
+ Helper method to VerifyDiagnosticResult that checks the location of a diagnostic And compares it with the location in the expected DiagnosticResult.
+ </summary>
+ <param name="analyzer">The analyzer that was being run on the sources</param>
+ <param name="diagnostic">The diagnostic that was found in the code</param>
+ <param name="actual">The Location of the Diagnostic found in the code</param>
+ <param name="expected">The DiagnosticResultLocation that should have been found</param>
+</member>
+<member name="M:DelSole_VSIX_Analysis.Test.TestHelper.DiagnosticVerifier.FormatDiagnostics(Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer,Microsoft.CodeAnalysis.Diagnostic[])">
+ <summary>
+ Helper method to format a Diagnostic into an easily readable string
+ </summary>
+ <param name="analyzer">The analyzer that this verifier tests</param>
+ <param name="diagnostics">The Diagnostics to be formatted</param>
+ <returns>The Diagnostics formatted as a string</returns>
+</member>
+</members>
+</doc>

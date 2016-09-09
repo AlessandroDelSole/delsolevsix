@@ -689,12 +689,9 @@ Namespace SnippetTools
                         snippet.Kind = CodeSnippetKinds.Any
                 End Select
 
-                Dim code = doc...<Code>.Value
-
                 For Each decl In snippet.Declarations
-                    code = code.Replace($"{doc...<Code>.@Delimiter}{decl.ID}{doc...<Code>.@Delimiter}", decl.Default)
+                    snippet.Code = snippet.Code.Replace($"{doc...<Code>.@Delimiter}{decl.ID}{doc...<Code>.@Delimiter}", decl.Default)
                 Next
-                snippet.Code = code
                 snippet._fileName = IO.Path.GetFileName(fileName)
                 Return snippet
 

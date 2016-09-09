@@ -1,0 +1,11 @@
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\bin\Release\Diagnostic.nuspec
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\bin\Release\tools\install.ps1
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\bin\Release\tools\uninstall.ps1
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\bin\Release\DelSole_VSIX_Analysis.Vsix.vsix
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\bin\Release\extension.vsixmanifest
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\bin\Release\DelSole_VSIX_Analysis.dll
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\bin\Release\DelSole_VSIX_Analysis.pdb
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\obj\Release\DelSole_VSIX_Analysis.Vsix.vbprojResolveAssemblyReference.cache
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\obj\Release\DelSole_VSIX_Analysis.Vsix.dll
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\obj\Release\DelSole_VSIX_Analysis.Vsix.pdb
+C:\GitHub\DelSoleVsix\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\obj\Release\extension.vsixmanifest

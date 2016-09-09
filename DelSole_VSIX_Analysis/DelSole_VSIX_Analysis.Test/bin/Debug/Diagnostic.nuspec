@@ -1,0 +1,29 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>DelSole.VSIX</id>
+    <version>1.0.2.0</version>
+    <title>Del Sole's VSIX Library for Code Snippets</title>
+    <authors>Alessandro Del Sole</authors>
+    <owners>Alessandro Del Sole</owners>
+    <licenseUrl>http://choosealicense.com/licenses/apache-2.0/</licenseUrl>
+    <projectUrl>https://github.com/AlessandroDelSole/DelSoleVsix</projectUrl>
+    <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>The Del Sole's VSIX library helps generating code snippets for Visual Studio 2015 and Visual Studio Code, plus it allows creating VSIX packages to share reusable IntelliSense code snippet files for Visual Studio 2015 and Visual Studio Code. We provide integrated Roslyn code analysis for live issue detection as you type</description>
+    <releaseNotes>Implemented ImportFromCodeFile method to generate a CodeSnippet from a supported code file</releaseNotes>
+    <copyright>Copyright (C), 2015 Alessandro Del Sole</copyright>
+    <tags>vsix, snippet, roslyn, analyzers, extensibility</tags>
+    <dependencies>
+      <dependency id="DotNetZip" version="1.9.7" />
+      <dependency id="Newtonsoft.Json" version="8.0.1" />
+      <dependency id="Microsoft.CodeAnalysis" version="1.1.1" />
+    </dependencies>
+  </metadata>
+  <!-- The convention for analyzers is to put language agnostic dlls in analyzers\dotnet and language specific analyzers in either analyzers\dotnet\cs or analyzers\dotnet\vb -->
+  <files>
+    <file src="*.dll" target="analyzers\dotnet\vb" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*;**\System.Composition.*" />
+    <file src="lib\DelSole.VSIX.dll" target="lib\net40"/>
+    <file src="tools\*.ps1" target="tools\" />
+  </files>
+</package>
