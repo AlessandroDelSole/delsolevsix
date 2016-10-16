@@ -494,10 +494,14 @@ Namespace SnippetTools
             Dim keywords = Me.Keywords.Split(","c).AsEnumerable
 
             Dim snippetType As String
-            If Me.Type = VSIX.SnippetType.SurroundsWith Then
-                snippetType = "SurroundsWith"
-            Else
+            If Language = "VB" Then
                 snippetType = "Expansion"
+            Else
+                If Me.Type = VSIX.SnippetType.SurroundsWith Then
+                    snippetType = "SurroundsWith"
+                Else
+                    snippetType = "Expansion"
+                End If
             End If
 
             Dim cdata As New XCData(editedCode)
