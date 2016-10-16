@@ -143,6 +143,7 @@
     <Compile Include="Snippet_ObjectModel\Declaration.vb" />
     <Compile Include="Snippet_ObjectModel\Import.vb" />
     <Compile Include="Snippet_ObjectModel\Reference.vb" />
+    <Compile Include="Snippet_ObjectModel\SnippetType.vb" />
     <Compile Include="Vsix_ObjectModel\FileAddedToPackageEventArgs.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

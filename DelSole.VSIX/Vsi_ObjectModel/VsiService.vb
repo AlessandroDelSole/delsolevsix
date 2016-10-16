@@ -27,7 +27,7 @@ Namespace VsiTools
             End If
 
             'Get a temporary folder
-            Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
+            Dim tempFolder = Path.Combine(Path.GetTempPath, IO.Path.GetFileNameWithoutExtension(vsiFileName))
 
             'Extract the old vsi package into a temp folder
             Dim oldVsi As New Ionic.Zip.ZipFile(vsiFileName)
@@ -37,7 +37,7 @@ Namespace VsiTools
             Dim snippets = IO.Directory.EnumerateFiles(tempFolder, "*.*snippet")
 
             'If not, throw
-            If snippets.Any = False Then
+            If snippets Is Nothing Or snippets.Any = False Then
                 Throw New InvalidOperationException("The specified .vsi package does not contain any code snippets")
             End If
 
@@ -119,7 +119,7 @@ Namespace VsiTools
             End If
 
             'Get a temporary folder
-            Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
+            Dim tempFolder = Path.Combine(Path.GetTempPath, IO.Path.GetFileNameWithoutExtension(vsiFileName))
 
             'Extract the old vsi package into a temp folder
             Dim oldVsi As New Ionic.Zip.ZipFile(vsiFileName)
@@ -129,7 +129,7 @@ Namespace VsiTools
             Dim snippets = IO.Directory.EnumerateFiles(tempFolder, "*.*snippet")
 
             'If not, throw
-            If snippets.Any = False Then
+            If snippets Is Nothing Or snippets.Any = False Then
                 Throw New InvalidOperationException("The specified .vsi package does not contain any code snippets")
             End If
 
@@ -164,7 +164,7 @@ Namespace VsiTools
             End If
 
             'Get a temporary folder
-            Dim tempFolder = Path.GetTempPath & IO.Path.GetFileNameWithoutExtension(vsiFileName)
+            Dim tempFolder = Path.Combine(Path.GetTempPath, IO.Path.GetFileNameWithoutExtension(vsiFileName))
 
             'Extract the old vsi package into a temp folder
             Dim oldVsi As New Ionic.Zip.ZipFile(vsiFileName)

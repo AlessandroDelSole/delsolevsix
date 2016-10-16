@@ -37,23 +37,23 @@ Namespace SnippetTools
         ''' The analysis result is assigned to the <seealso cref="Diagnostics"/> property
         ''' </summary>
         Public Sub AnalyzeCode()
-            Select Case Me.Language.ToUpper()
+            Select Case Language.ToUpper
                 Case "VB"
-                    Dim tree = VisualBasicSyntaxTree.ParseText(Me.Code).GetRoot
+                    Dim tree = VisualBasicSyntaxTree.ParseText(Code).GetRoot
                     If tree.ContainsDiagnostics Then
-                        Me._diagnostics = New ObservableCollection(Of Diagnostic)(tree.GetDiagnostics())
+                        _diagnostics = New ObservableCollection(Of Diagnostic)(tree.GetDiagnostics)
                     Else
-                        Me._diagnostics = Nothing
+                        _diagnostics = Nothing
                     End If
                 Case "CSHARP"
-                    Dim tree = CSharpSyntaxTree.ParseText(Me.Code).GetRoot
+                    Dim tree = CSharpSyntaxTree.ParseText(Code).GetRoot
                     If tree.ContainsDiagnostics Then
-                        Me._diagnostics = New ObservableCollection(Of Diagnostic)(tree.GetDiagnostics())
+                        _diagnostics = New ObservableCollection(Of Diagnostic)(tree.GetDiagnostics)
                     Else
-                        Me._diagnostics = Nothing
+                        _diagnostics = Nothing
                     End If
                 Case Else
-                    Me._diagnostics = Nothing
+                    _diagnostics = Nothing
             End Select
         End Sub
 #End Region
@@ -71,6 +71,7 @@ Namespace SnippetTools
         Private _declarations As Declarations
         Private _code As String
         Private _language As String
+        Private _snippetType As SnippetType
 #End Region
 
 #Region "Properties"
@@ -200,6 +201,20 @@ Namespace SnippetTools
             Set(value As CodeSnippetKinds)
                 _kind = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Kind)))
+                IsDirty = True
+            End Set
+        End Property
+
+        <Category("Properties")>
+        <DisplayName("Type")>
+        <Description("Expansion or SurroundsWith snippet. Expansion is default")>
+        Public Property Type As SnippetType
+            Get
+                Return _snippetType
+            End Get
+            Set(value As SnippetType)
+                _snippetType = value
+                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Type)))
                 IsDirty = True
             End Set
         End Property
@@ -340,7 +355,7 @@ Namespace SnippetTools
         ''' <returns>Boolean</returns>
         Public Overridable ReadOnly Property HasErrors() As Boolean
             Get
-                Return (validationErrors.Any)
+                Return validationErrors.Any
             End Get
         End Property
 
@@ -349,7 +364,7 @@ Namespace SnippetTools
         ''' </summary>
         ''' <returns>String</returns>
         Public ReadOnly Property [Error]() As String _
-        Implements System.ComponentModel.IDataErrorInfo.Error
+        Implements IDataErrorInfo.Error
             Get
                 If validationErrors.Any Then
                     Return $"{TypeName(Me)} data is invalid."
@@ -365,7 +380,7 @@ Namespace SnippetTools
         ''' <param name="columnName"></param>
         ''' <returns>String</returns>
         Default Public ReadOnly Property Item(ByVal columnName As String) As String _
-        Implements System.ComponentModel.IDataErrorInfo.Item
+        Implements IDataErrorInfo.Item
             Get
                 If validationErrors.ContainsKey(columnName) Then
                     Return validationErrors(columnName).ToString
@@ -383,30 +398,30 @@ Namespace SnippetTools
         Private Sub CheckValue(ByVal value As String)
             Select Case value
                 Case Is = "Title"
-                    If Me.Title = "" Or String.IsNullOrEmpty(Me.Title) Then
-                        Me.AddError("Title", "Value cannot be null")
+                    If Title = "" Or String.IsNullOrEmpty(Title) Then
+                        AddError("Title", "Value cannot be null")
                     Else
-                        Me.RemoveError("Title")
+                        RemoveError("Title")
                     End If
                 Case Is = "Code"
-                    If Me.Code = "" Or String.IsNullOrEmpty(Me.Code) Then
-                        Me.AddError("Code", "Value cannot be null")
+                    If Code = "" Or String.IsNullOrEmpty(Code) Then
+                        AddError("Code", "Value cannot be null")
                     Else
-                        Me.RemoveError("Code")
+                        RemoveError("Code")
                     End If
                 Case Is = "Author"
-                    If Me.Author = "" Or String.IsNullOrEmpty(Me.Author) Then
-                        Me.AddError("Author", "Value cannot be null")
+                    If Author = "" Or String.IsNullOrEmpty(Author) Then
+                        AddError("Author", "Value cannot be null")
                     Else
-                        Me.RemoveError("Author")
+                        RemoveError("Author")
                     End If
                 Case Is = "Language"
-                    If Me.Language = "" Or String.IsNullOrEmpty(Me.Language) Then
-                        Me.AddError("Language", "Value cannot be null")
+                    If Language = "" Or String.IsNullOrEmpty(Language) Then
+                        AddError("Language", "Value cannot be null")
                     ElseIf supportedLanguages.Contains(Language.ToUpper) = False Then
-                        Me.AddError("Language", $"{Language} language is not supported")
+                        AddError("Language", $"{Language} language is not supported")
                     Else
-                        Me.RemoveError("Language")
+                        RemoveError("Language")
                     End If
             End Select
         End Sub
@@ -433,6 +448,8 @@ Namespace SnippetTools
             Namespaces = New [Imports]
             References = New References
             Declarations = New Declarations
+            Type = SnippetType.Expansion
+            IsDirty = False
         End Sub
 
 #Region "Load and save snippets"
@@ -464,52 +481,59 @@ Namespace SnippetTools
         ''' </summary>
         ''' <param name="fileName">The target snippet file name</param>
         Private Sub SaveVisualStudioSnippet(fileName As String)
-            Dim snippetKind As String = ReturnSnippetKind(Me.Kind)
+            Dim snippetKind As String = ReturnSnippetKind(Kind)
 
-            Dim editedCode = Me.Code
+            Dim editedCode = Code
 
-            If Me.Declarations.Any Then
-                For Each decl In Me.Declarations
+            If Declarations.Any Then
+                For Each decl In Declarations
                     editedCode = editedCode.Replace(decl.Default, "$" & decl.ID & "$")
                 Next
             End If
 
             Dim keywords = Me.Keywords.Split(","c).AsEnumerable
 
+            Dim snippetType As String
+            If Me.Type = VSIX.SnippetType.SurroundsWith Then
+                snippetType = "SurroundsWith"
+            Else
+                snippetType = "Expansion"
+            End If
+
             Dim cdata As New XCData(editedCode)
             Dim doc = <?xml version="1.0" encoding="utf-8"?>
                       <CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
                           <CodeSnippet Format="1.0.0">
                               <Header>
-                                  <Title><%= Me.Title %></Title>
-                                  <Author><%= Me.Author %></Author>
-                                  <Description><%= Me.Description %></Description>
-                                  <HelpUrl><%= Me.HelpUrl %></HelpUrl>
+                                  <Title><%= Title %></Title>
+                                  <Author><%= Author %></Author>
+                                  <Description><%= Description %></Description>
+                                  <HelpUrl><%= HelpUrl %></HelpUrl>
                                   <SnippetTypes>
-                                      <SnippetType>Expansion</SnippetType>
+                                      <SnippetType><%= snippetType %></SnippetType>
                                   </SnippetTypes>
                                   <Keywords>
                                       <%= From key In keywords
                                           Select <Keyword><%= key %></Keyword> %>
                                   </Keywords>
-                                  <Shortcut><%= Me.Shortcut %></Shortcut>
+                                  <Shortcut><%= Shortcut %></Shortcut>
                               </Header>
                               <Snippet>
                                   <References>
-                                      <%= From ref In Me.References
+                                      <%= From ref In References
                                           Select <Reference>
                                                      <Assembly><%= ref.Assembly %></Assembly>
                                                      <Url><%= ref.Url %></Url>
                                                  </Reference> %>
                                   </References>
                                   <Imports>
-                                      <%= From imp In Me.Namespaces
+                                      <%= From imp In Namespaces
                                           Select <Import>
                                                      <Namespace><%= imp.ImportDirective %></Namespace>
                                                  </Import> %>
                                   </Imports>
                                   <Declarations>
-                                      <%= From decl In Me.Declarations
+                                      <%= From decl In Declarations
                                           Where decl.ReplacementType.ToLower = "object"
                                           Select <Object Editable="true">
                                                      <ID><%= decl.ID %></ID>
@@ -518,7 +542,7 @@ Namespace SnippetTools
                                                      <Default><%= decl.Default %></Default>
                                                      <Function><%= decl.Function %></Function>
                                                  </Object> %>
-                                      <%= From decl In Me.Declarations
+                                      <%= From decl In Declarations
                                           Where decl.ReplacementType.ToLower = "literal"
                                           Select <Literal Editable="true">
                                                      <ID><%= decl.ID %></ID>
@@ -527,13 +551,13 @@ Namespace SnippetTools
                                                      <Function><%= decl.Function %></Function>
                                                  </Literal> %>
                                   </Declarations>
-                                  <Code Language=<%= Me.Language %> Kind=<%= snippetKind %>
+                                  <Code Language=<%= Language %> Kind=<%= snippetKind %>
                                       Delimiter="$"><%= cdata %></Code>
                               </Snippet>
                           </CodeSnippet>
                       </CodeSnippets>
             doc.Save(fileName)
-            Me._fileName = IO.Path.GetFileName(fileName)
+            _fileName = Path.GetFileName(fileName)
         End Sub
 
         ''' <summary>
@@ -542,13 +566,13 @@ Namespace SnippetTools
         ''' <param name="fileName">Must be a .vb, .cs, .sql, .xml, .xaml, .cpp, or .js file</param>
         ''' <returns></returns>
         Public Shared Function ImportCodeFile(fileName As String) As CodeSnippet
-            If Not IO.File.Exists(fileName) Then
-                Throw New IO.FileNotFoundException("File not found", fileName)
+            If Not File.Exists(fileName) Then
+                Throw New FileNotFoundException("File not found", fileName)
             End If
 
             Dim snippet As New CodeSnippet
 
-            Dim fileExt = IO.Path.GetExtension(fileName).ToLower()
+            Dim fileExt = Path.GetExtension(fileName).ToLower
 
             Select Case fileExt
                 Case = ".vb"
@@ -581,14 +605,14 @@ Namespace SnippetTools
         ''' <param name="fileName"></param>
         ''' <returns><seealso cref="CodeSnippet"/></returns>
         Public Shared Function LoadSnippet(fileName As String) As CodeSnippet
-            If Not IO.File.Exists(fileName) Then
-                Throw New IO.FileNotFoundException("File not found", fileName)
+            If Not File.Exists(fileName) Then
+                Throw New FileNotFoundException("File not found", fileName)
             End If
 
             Dim snippet As CodeSnippet
 
             'snippet for VS Code
-            If IO.Path.GetExtension(fileName).ToLower.EndsWith("json") Then
+            If Path.GetExtension(fileName).ToLower.EndsWith("json") Then
                 snippet = New CodeSnippet
 
                 Dim json = My.Computer.FileSystem.ReadAllText(fileName)
@@ -696,7 +720,7 @@ Namespace SnippetTools
                 For Each decl In snippet.Declarations
                     snippet.Code = snippet.Code.Replace($"{doc...<Code>.@Delimiter}{decl.ID}{doc...<Code>.@Delimiter}", decl.Default)
                 Next
-                snippet._fileName = IO.Path.GetFileName(fileName)
+                snippet._fileName = Path.GetFileName(fileName)
                 Return snippet
 
             End If
@@ -707,10 +731,10 @@ Namespace SnippetTools
         ''' </summary>
         ''' <param name="fileName"></param>
         Private Sub SaveVSCodeSnippet(fileName As String)
-            Dim editedCode = Me.Code
+            Dim editedCode = Code
 
-            If Me.Declarations.Any Then
-                For Each decl In Me.Declarations
+            If Declarations.Any Then
+                For Each decl In Declarations
                     editedCode = editedCode.Replace(decl.Default, "${" & decl.ID & "}")
                 Next
             End If
@@ -721,23 +745,24 @@ Namespace SnippetTools
                 Using jw As New JsonTextWriter(str)
                     jw.Formatting = Formatting.Indented
                     jw.WriteStartObject()
-                    jw.WritePropertyName(Me.Title)
+                    jw.WritePropertyName(Title)
                     jw.WriteStartObject()
                     jw.WritePropertyName("prefix")
-                    jw.WriteValue(Me.Shortcut)
+                    jw.WriteValue(Shortcut)
                     jw.WritePropertyName("body")
                     jw.WriteStartArray()
+
                     For Each line As String In TextLines
                         If Not line.Length = 0 Then jw.WriteValue(line)
                     Next
                     jw.WriteEndArray()
                     jw.WritePropertyName("description")
-                    jw.WriteValue(Me.Description)
+                    jw.WriteValue(Description)
                     jw.WriteEndObject()
                     jw.WriteEndObject()
                 End Using
             End Using
-            Me._fileName = IO.Path.GetFileName(fileName)
+            _fileName = Path.GetFileName(fileName)
         End Sub
 
         ''' <summary>
@@ -746,7 +771,7 @@ Namespace SnippetTools
         ''' <param name="fileName">The target snippet file name</param>
         ''' <param name="ideType">A value from <seealso cref="IDEType"/> that determines if the snippet must target Visual Studio or Code</param>
         Public Sub SaveSnippet(fileName As String, ideType As IDEType)
-            If Me.HasErrors Then
+            If HasErrors Then
                 Throw New InvalidOperationException("The supplied instance of CodeSnippet has errors that must be fixed first.")
             End If
 
