@@ -256,6 +256,14 @@ DelSole.VSIX
  <param name="fileName">The target snippet file name</param>
  <param name="ideType">A value from <seealso cref="T:DelSole.VSIX.SnippetTools.IDEType"/> that determines if the snippet must target Visual Studio or Code</param>
 </member>
+<member name="M:DelSole.VSIX.SnippetTools.CodeSnippet.ImportSublimeSnippet(System.String)">
+ <summary>
+ Convert a Sublime code snippet into an IntelliSense code snippet for Visual Studio
+ </summary>
+ <param name="fileName"></param>
+ <remarks>AS OF THIS VERSION, REPLACEMENTS ARE NOT PARSED. WORK IN PROGRESS</remarks>
+ <returns><seealso cref="T:DelSole.VSIX.SnippetTools.CodeSnippet"/></returns>
+</member>
 <member name="T:DelSole.VSIX.SnippetTools.CodeSnippetKinds">
  <summary>
  Enumerate the code snippet kinds. 

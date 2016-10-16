@@ -13,7 +13,6 @@ C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\to
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\tools\uninstall.ps1
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\DelSole_VSIX_Analysis.dll
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\bin\Release\DelSole_VSIX_Analysis.pdb
-C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.vbprojResolveAssemblyReference.cache
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.Resources.resources
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.vbproj.GenerateResource.Cache
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.dll

@@ -783,6 +783,56 @@ Namespace SnippetTools
             IsDirty = False
         End Sub
 
+        Private Shared Function ParseSublimeScopeSourceIntoSnippetLanguage(scope As String) As String
+            scope = scope.ToLowerInvariant()
+
+            If Not scope.StartsWith("source.") Or Not scope.StartsWith("text.") Then
+                Throw New InvalidOperationException("Invalid Sublime snippet")
+            End If
+
+            Select Case scope
+                Case = "source.sql"
+                    Return "SQL"
+                Case = "source.cs"
+                    Return "CSharp"
+                Case = "source.js"
+                    Return "JavaScript"
+                Case = "text.xml"
+                    Return "XML"
+                Case = "text.html"
+                    Return "HTML"
+                Case = "source.c++"
+                    Return "CPP"
+                Case Else   ' Must be fixed with a different default
+                    Return "VB"
+            End Select
+        End Function
+
+        ''' <summary>
+        ''' Convert a Sublime code snippet into an IntelliSense code snippet for Visual Studio
+        ''' </summary>
+        ''' <param name="fileName"></param>
+        ''' <remarks>AS OF THIS VERSION, REPLACEMENTS ARE NOT PARSED. WORK IN PROGRESS</remarks>
+        ''' <returns><seealso cref="CodeSnippet"/></returns>
+        Public Shared Function ImportSublimeSnippet(fileName As String) As CodeSnippet
+            If Not File.Exists(fileName) Then
+                Throw New FileNotFoundException("File not found", fileName)
+            End If
+
+            Dim snippet As CodeSnippet
+
+            Dim doc = XDocument.Load(fileName)
+            snippet = New CodeSnippet
+
+            My.User.InitializeWithWindowsUser()
+            snippet.Author = My.User.Name
+            snippet.Code = doc...<content>?.Value
+            snippet.Shortcut = doc...<tabTrigger>?.Value
+            snippet.Description = doc...<description>?.Value
+            snippet.Language = ParseSublimeScopeSourceIntoSnippetLanguage(doc...<scope>?.Value)
+            snippet.Title = IO.Path.GetFileNameWithoutExtension(fileName)
+            Return snippet
+        End Function
     End Class
 
     ''' <summary>

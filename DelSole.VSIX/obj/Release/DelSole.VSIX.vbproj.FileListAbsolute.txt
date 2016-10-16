@@ -84,7 +84,6 @@ C:\GitHub\delsolevsix\DelSole.VSIX\bin\Release\System.Composition.Hosting.xml
 C:\GitHub\delsolevsix\DelSole.VSIX\bin\Release\System.Composition.Runtime.xml
 C:\GitHub\delsolevsix\DelSole.VSIX\bin\Release\System.Composition.TypedParts.xml
 C:\GitHub\delsolevsix\DelSole.VSIX\bin\Release\System.Reflection.Metadata.xml
-C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.vbprojResolveAssemblyReference.cache
 C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.Resources.resources
 C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.vbproj.GenerateResource.Cache
 C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.dll
