@@ -17,3 +17,4 @@ C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\De
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.vbproj.GenerateResource.Cache
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.dll
 C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.pdb
+C:\GitHub\delsolevsix\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\obj\Release\DelSole_VSIX_Analysis.vbprojResolveAssemblyReference.cache

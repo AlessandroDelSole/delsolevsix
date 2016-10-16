@@ -785,11 +785,6 @@ Namespace SnippetTools
 
         Private Shared Function ParseSublimeScopeSourceIntoSnippetLanguage(scope As String) As String
             scope = scope.ToLowerInvariant()
-
-            If Not scope.StartsWith("source.") Or Not scope.StartsWith("text.") Then
-                Throw New InvalidOperationException("Invalid Sublime snippet")
-            End If
-
             Select Case scope
                 Case = "source.sql"
                     Return "SQL"
@@ -826,10 +821,10 @@ Namespace SnippetTools
 
             My.User.InitializeWithWindowsUser()
             snippet.Author = My.User.Name
-            snippet.Code = doc...<content>?.Value
-            snippet.Shortcut = doc...<tabTrigger>?.Value
-            snippet.Description = doc...<description>?.Value
-            snippet.Language = ParseSublimeScopeSourceIntoSnippetLanguage(doc...<scope>?.Value)
+            snippet.Code = doc.Element("snippet").Element("content")?.Value
+            snippet.Shortcut = doc.Element("snippet").Element("tabTrigger")?.Value
+            snippet.Description = doc.Element("snippet").Element("description")?.Value
+            snippet.Language = ParseSublimeScopeSourceIntoSnippetLanguage(doc.Element("snippet").Element("scope")?.Value)
             snippet.Title = IO.Path.GetFileNameWithoutExtension(fileName)
             Return snippet
         End Function

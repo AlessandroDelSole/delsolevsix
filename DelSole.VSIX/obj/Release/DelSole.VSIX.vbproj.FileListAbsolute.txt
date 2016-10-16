@@ -89,3 +89,4 @@ C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.vbproj.GenerateResou
 C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.dll
 C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.xml
 C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.pdb
+C:\GitHub\delsolevsix\DelSole.VSIX\obj\Release\DelSole.VSIX.vbprojResolveAssemblyReference.cache
