@@ -41,7 +41,11 @@ Namespace SnippetTools
 
                 Dim fileNames As New List(Of String)
                 For Each folder In Me.Folders
-                    Dim files = IO.Directory.EnumerateFiles(folder.FolderName).Where(Function(f) IO.Path.GetExtension(f).ToLowerInvariant.Contains("snippet") Or IO.Path.GetExtension(f).ToLowerInvariant = ".json")
+                    Dim files =
+                        IO.Directory.EnumerateFiles(folder.FolderName, "*.*", IO.SearchOption.AllDirectories).
+                        Where(Function(f) IO.Path.GetExtension(f).ToLowerInvariant.Contains("snippet") Or
+                        IO.Path.GetExtension(f).ToLowerInvariant = ".json")
+
                     If files.Any Then
                         For Each fileName In files
                             fileNames.Add(fileName)
