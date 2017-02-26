@@ -500,9 +500,7 @@ Public Class VsixPackage
             'Copy all snippets in the collection to the above subfolder
             For Each item1 In Me.CodeSnippets
                 Dim tempName As String = Path.Combine(snippetFolder, item1.SnippetFileName.Replace(" ", "%20"))
-                If IO.File.Exists(tempName) Then IO.File.Delete(tempName)
-
-                IO.File.Copy(Path.Combine(item1.SnippetPath, item1.SnippetFileName), tempName)
+                IO.File.Copy(Path.Combine(item1.SnippetPath, item1.SnippetFileName), tempName, True)
             Next
         Catch ex As Exception
             Throw
@@ -553,9 +551,7 @@ Public Class VsixPackage
                                            </Metadata>
                                            <Installation>
                                                <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[12.0,14.0]"/>
-                                               <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.VWDExpress"/>
-                                               <%= If(Me.CodeSnippets.First.SnippetLanguage.ToUpper = "JAVASCRIPT", Nothing, <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.VSWinDesktopExpress"/>) %>
-                                               <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.VSWinExpress"/>
+                                               <InstallationTarget Version="[15.0,16.0)" Id="Microsoft.VisualStudio.Community" />
                                            </Installation>
                                            <Dependencies>
                                                <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="4.5"/>
@@ -563,6 +559,9 @@ Public Class VsixPackage
                                            <Assets>
                                                <Asset Type="Microsoft.VisualStudio.VsPackage" Path=<%= "Snippets\" & Me.PkgDefName %>/>
                                            </Assets>
+                                           <Prerequisites>
+                                                <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0.26004.1,16.0)" DisplayName="Visual Studio core editor" />
+                                           </Prerequisites>
                                        </PackageManifest>
 
         'For some reasons, the License field is the only one you have to check
@@ -580,8 +579,84 @@ Public Class VsixPackage
         End Try
     End Sub
 
+    Private Sub GenerateCatalogJson(vsixName As String)
+        Dim tempFolder = Path.Combine(IO.Path.GetTempPath, "DSVSIX")
+        Dim size As Long
+
+        Dim catalog As New CatalogJson
+        catalog.ManifestVersion = "1.1"
+        catalog.Info = "{""id"":""" + Me.PackageID + """,version=""" + Me.PackageVersion + """}"
+
+        Dim pack1 As New CatalogJsonFile
+        pack1.Id = Me.PackageID
+        pack1.Version = Me.PackageVersion
+        pack1.Type = "Component"
+        pack1.Extension = True
+
+        pack1.Dependencies = "{""" + Me.PackageID + """:""" + Me.PackageVersion + """,""Microsoft.VisualStudio.Component.CoreEditor"" : ""[15.0.26004.1,16.0)""}"
+
+        Dim locRes As New CatalogLocalizedResource
+        locRes.Language = "en-US"
+        locRes.Title = Me.ProductName
+        locRes.Description = Me.PackageDescription
+
+        pack1.LocalizedResources.Add(locRes)
+
+
+        Dim pack2 As New CatalogJsonFile
+        pack2.Id = Me.PackageID
+        pack2.Version = Me.PackageVersion
+        pack2.Type = "Vsix"
+        pack2.ExtensionDir = "[installdir]\Common7\IDE\Extensions\nifpsldb.gky"
+        pack2.VsixId = Me.PackageID
+
+        Dim dInfo As New DirectoryInfo(tempFolder)
+
+        For Each file As FileInfo In dInfo.EnumerateFiles()
+            size += file.Length
+        Next
+
+        pack2.InstallSize = size
+        pack2.Payloads.Add(New CatalogPayload With {.FileName = vsixName, .Size = size})
+
+        Dim catalogJson = JsonConvert.SerializeObject(catalog)
+
+        IO.File.WriteAllText((Path.Combine(tempFolder, "catalog.json")), catalogJson)
+
+    End Sub
+
+    Private Sub GenerateManifestJson()
+        Dim tempFolder = Path.Combine(IO.Path.GetTempPath, "DSVSIX")
+        Dim size As Long
+
+        Dim manifest As New ManifestJson
+
+        manifest.Id = Me.PackageID
+        manifest.Type = "Vsix"
+        manifest.Version = Me.PackageVersion
+        manifest.VsixId = Me.PackageID
+        manifest.ExtensionDir = "[installdir]\Common7\IDE\Extensions\nifpsldb.gky"
+
+        Dim dInfo As New DirectoryInfo(tempFolder)
+
+        For Each file As FileInfo In dInfo.EnumerateFiles()
+            size += file.Length
+            Dim fs = file.OpenRead()
+            Dim hashValue = System.Security.Cryptography.SHA256.Create().ComputeHash(fs)
+            manifest.Files.Add(New ManifestJsonFile With {.FileName = file.Name, .Sha256 = hashValue.ToString()})
+            fs.Close()
+        Next
+
+        manifest.InstallSize = size
+        manifest.Dependencies = "{""Microsoft.VisualStudio.Component.CoreEditor"":""[15.0.26004.1,16.0)""}"
+
+        Dim manifestJson = JsonConvert.SerializeObject(manifest)
+
+        IO.File.WriteAllText((Path.Combine(tempFolder, "manifest.json")), manifestJson)
+    End Sub
+
     ''' <summary>
-    ''' Generate a .vsix package for Visual Studio 2015
+    ''' Generate a .vsix package for Visual Studio 2015 and 2017
     ''' </summary>
     ''' <param name="fileName"></param>
     Private Sub BuildClassicVsix(fileName As String)
@@ -626,6 +701,9 @@ Public Class VsixPackage
 
         'Generate a .pkgdef file content based on the language of the 
         GeneratePkgDefToTempFolder()
+
+        GenerateManifestJson()
+        GenerateCatalogJson(fileName)
 
         'Zip the package into VSIX
         Me.Zip(fileName, tempFolder)

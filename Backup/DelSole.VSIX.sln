@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DelSole.VSIX", "DelSole.VSIX\DelSole.VSIX.vbproj", "{3F0DBC2B-0DA2-4DA7-B1B9-41CF3A2E9CBD}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DelSole_VSIX_Analysis", "DelSole_VSIX_Analysis\DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.vbproj", "{F98ABFBC-C8D7-484C-89D1-BF9B74CEFA8B}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DelSole_VSIX_Analysis.Test", "DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Test\DelSole_VSIX_Analysis.Test.vbproj", "{5399E7A8-F8F1-4F2E-A5D2-9C96F3DD2A2D}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DelSole_VSIX_Analysis.Vsix", "DelSole_VSIX_Analysis\DelSole_VSIX_Analysis.Vsix\DelSole_VSIX_Analysis.Vsix.vbproj", "{4C34C286-1772-4976-BBB1-6ED038621AA9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F0DBC2B-0DA2-4DA7-B1B9-41CF3A2E9CBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F0DBC2B-0DA2-4DA7-B1B9-41CF3A2E9CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F0DBC2B-0DA2-4DA7-B1B9-41CF3A2E9CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F0DBC2B-0DA2-4DA7-B1B9-41CF3A2E9CBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F98ABFBC-C8D7-484C-89D1-BF9B74CEFA8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F98ABFBC-C8D7-484C-89D1-BF9B74CEFA8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F98ABFBC-C8D7-484C-89D1-BF9B74CEFA8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F98ABFBC-C8D7-484C-89D1-BF9B74CEFA8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5399E7A8-F8F1-4F2E-A5D2-9C96F3DD2A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5399E7A8-F8F1-4F2E-A5D2-9C96F3DD2A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5399E7A8-F8F1-4F2E-A5D2-9C96F3DD2A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5399E7A8-F8F1-4F2E-A5D2-9C96F3DD2A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C34C286-1772-4976-BBB1-6ED038621AA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C34C286-1772-4976-BBB1-6ED038621AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C34C286-1772-4976-BBB1-6ED038621AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C34C286-1772-4976-BBB1-6ED038621AA9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
